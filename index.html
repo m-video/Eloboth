@@ -398,6 +398,7 @@
     <button type="button" class="boton" data-modo="normal">Chat normal</button>
     <button type="button" class="boton" data-modo="cuadro">Crear cuadro comparativo</button>
     <button type="button" class="boton" data-modo="cuento">Crear cuento</button>
+    <button type="button" class="boton" data-modo="programacion">Modo programación</button>
   </div>
   <div class="fila">
     <button type="button" class="boton" id="adjuntar" title="Adjuntar archivo">📎</button>
@@ -446,6 +447,7 @@ let modoActivo = null; // null = chat normal; si no, el modo queda fijo hasta ca
 const MODOS = {
   cuadro: { prefijo: "crear cuadro comparativo", etiqueta: "Crear cuadro comparativo" },
   cuento: { prefijo: "crear cuento", etiqueta: "Crear cuento" },
+  programacion: { prefijo: "codigo:", etiqueta: "Modo programación" },
 };
 function fijarModo(clave) {
   modoActivo = MODOS[clave] || null;
@@ -1679,6 +1681,18 @@ async function buscarEnWorker(pregunta) {
   return d && (d.resumen || d.texto) ? d : null;
 }
 
+// Modo programación: pide al worker código completo en el lenguaje que se indique
+async function respuestaDeCodigo(pedido) {
+  const pregunta = (pedido || "").trim();
+  if (!pregunta) return "Dime qué código quieres y en qué lenguaje. Por ejemplo: HTML de una calculadora, o Python que lea un CSV.";
+  progreso("💻 Escribiendo el código...");
+  const senal = typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(60000) : undefined;
+  const r = await fetch(`${WORKER_URL}/?code=1&q=${encodeURIComponent(pregunta)}`, { signal: senal }).catch(() => null);
+  const d = r && r.ok ? await r.json().catch(() => null) : null;
+  if (d && d.resumen) return d.resumen;
+  return "No pude escribir el código ahora. Revisa que el worker esté publicado con la IA y vuelve a intentarlo.";
+}
+
 // Charla: el worker responde cualquier frase como persona (necesita la clave de OpenRouter en el worker)
 async function respuestaDeChat(texto) {
   const senal = typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(30000) : undefined;
@@ -1815,6 +1829,10 @@ async function procesarComando(msgOriginal) {
     return "¡Hola!";
   }
 
+  // 1a-cod. Modo programación ("codigo: ...") o "escribe código de ..." en cualquier lenguaje
+  const mCodigo = msgOriginal.match(/^\s*(?:codigo|código)\s*:\s*([\s\S]*)$/i);
+  if (mCodigo) return await respuestaDeCodigo(mCodigo[1]);
+
   // 1a-corr. Corrección: "te equivocaste", "no puede ser", "eso está mal"... vuelve a responder la pregunta anterior
   // Solo es corrección si va dirigida a Eloboth ("te equivocaste") o es una frase corta que corrige algo.
   // "me equivoqué", "se equivocó", "no te equivocaste" no cuentan.
@@ -1919,7 +1937,7 @@ async function procesarComando(msgOriginal) {
   if (personal) return personal;
 
   // 2b. Análisis del archivo adjunto (por ejemplo "analiza el archivo")
-  const VERBOS_ARCHIVO = ["analiza", "analizar", "analisis", "revisa", "revisar", "resume", "resumen", "resumir", "describe", "describir", "lee", "leer", "contenido", "dice", "explica", "explicar"];
+  const VERBOS_ARCHIVO = ["analiza", "analizar", "analisis", "revisa", "revisar", "resume", "resumen", "resumir", "describe", "describir", "lee", "leer", "contenido", "dice", "explica", "explicar", "diagnostico", "diagnostica", "diagnosticar", "diagnosis", "errores", "problemas"];
   if (palabras.some((p) => ["archivo", "adjunto", "documento"].includes(p) || VERBOS_ARCHIVO.includes(p))) {
     if (archivoActual) return analizarArchivo(archivoActual);
     if (palabras.some((p) => ["archivo", "adjunto", "documento"].includes(p))) {
@@ -2224,7 +2242,59 @@ function analizarArchivo(a) {
   if (primeras.length) {
     lineas.push("👀 Primeras líneas:\n" + primeras.map((l) => `  ${l.slice(0, 120)}`).join("\n"));
   }
+  const hallazgos = diagnosticoDeArchivo(a, ext);
+  lineas.push(hallazgos.length
+    ? "🩺 Diagnóstico:\n" + hallazgos.map((h) => `  • ${h}`).join("\n")
+    : "🩺 Diagnóstico: no encontré problemas evidentes con reglas simples.");
   return lineas.join("\n");
+}
+
+// Diagnóstico con reglas simples: qué está mal o qué conviene mejorar, según el tipo de archivo
+function diagnosticoDeArchivo(a, ext) {
+  const t = a.texto || "";
+  const hallazgos = [];
+  const lineas = t.split("\n");
+
+  const largas = lineas.filter((l) => l.length > 200).length;
+  if (largas) hallazgos.push(`Hay ${largas} línea(s) de más de 200 caracteres; conviene partirlas para leerlas mejor.`);
+
+  const vacias = lineas.filter((l) => l.trim() === "").length;
+  if (lineas.length > 10 && vacias / lineas.length > 0.4) hallazgos.push("Más del 40% de las líneas están vacías; puede sobrar espacio.");
+
+  const repetidas = lineas.filter((l) => l.trim()).length - new Set(lineas.map((l) => l.trim()).filter(Boolean)).size;
+  if (repetidas > 5) hallazgos.push(`Hay ${repetidas} líneas repetidas exactamente.`);
+
+  const pendientes = (t.match(/\b(TODO|FIXME|XXX|HACK)\b/g) || []).length;
+  if (pendientes) hallazgos.push(`Tiene ${pendientes} marca(s) pendiente(s) (TODO, FIXME, XXX o HACK).`);
+
+  if (["js", "ts", "lua", "py", "c", "cpp", "java", "html", "htm"].includes(ext)) {
+    const depuracion = (t.match(/console\.log|print\(|System\.out\.println/g) || []).length;
+    if (depuracion) hallazgos.push(`Tiene ${depuracion} instrucción(es) de depuración (console.log, print o similares). Conviene quitarlas antes de publicar.`);
+    if (/\beval\s*\(/.test(t)) hallazgos.push("Usa eval(), que es riesgoso si recibe datos de afuera.");
+    if (/\bdebugger\b/.test(t)) hallazgos.push("Tiene una instrucción debugger olvidada.");
+    const llaveA = (t.match(/\{/g) || []).length, llaveC = (t.match(/\}/g) || []).length;
+    if (llaveA !== llaveC) hallazgos.push(`Las llaves no cuadran: ${llaveA} abren y ${llaveC} cierran. Puede faltar o sobrar una.`);
+    const parA = (t.match(/\(/g) || []).length, parC = (t.match(/\)/g) || []).length;
+    if (parA !== parC) hallazgos.push(`Los paréntesis no cuadran: ${parA} abren y ${parC} cierran.`);
+  }
+
+  if (["html", "htm"].includes(ext)) {
+    if (!/<!doctype html>/i.test(t)) hallazgos.push("Le falta <!DOCTYPE html> al inicio.");
+    if (!/<title>/i.test(t)) hallazgos.push("No tiene <title>, así que la pestaña se verá sin nombre.");
+    if (!/name="viewport"/i.test(t)) hallazgos.push("No tiene meta viewport; en el celular puede verse mal.");
+    const bloques = /<(div|section|main|header|footer|ul|ol|table|form)\b/gi;
+    const cierres = /<\/(div|section|main|header|footer|ul|ol|table|form)>/gi;
+    const aperturas = (t.match(bloques) || []).length, cerradas = (t.match(cierres) || []).length;
+    if (aperturas !== cerradas) hallazgos.push(`Hay ${aperturas} etiquetas de bloque abiertas y ${cerradas} cerradas; puede faltar cerrar alguna.`);
+    if (/<script[^>]+src="http:/i.test(t)) hallazgos.push("Carga algún script por http sin cifrar; conviene usar https.");
+  }
+
+  if (ext === "csv") {
+    const columnas = lineas.filter((l) => l.trim()).map((l) => l.split(",").length);
+    if (columnas.length && new Set(columnas).size > 1) hallazgos.push("Las filas no tienen la misma cantidad de columnas; alguna puede estar mal.");
+  }
+
+  return hallazgos;
 }
 
 async function recibirArchivo(file) {
@@ -2253,7 +2323,7 @@ async function recibirArchivo(file) {
   }
 
   archivoActual = info;
-  agregarMensaje(`Archivo recibido. Escribe "analiza el archivo", "resume el archivo" o "qué dice el archivo".`, "eloboth");
+  agregarMensaje(`Archivo recibido. Escribe "analiza el archivo", "diagnostica el archivo" o "qué dice el archivo".`, "eloboth");
 }
 
 document.getElementById("adjuntar").onclick = () => document.getElementById("archivoInput").click();
