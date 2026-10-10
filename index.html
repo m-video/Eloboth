@@ -1,0 +1,2324 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eloboth - Agente Inteligente</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZm9uZG8iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMWIyNDUwIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzA3MGIxYSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYm9yZGUiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIwIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNmM0Y2ZmIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwZTVmZiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyNCIgZmlsbD0idXJsKCNmb25kbykiLz4KICA8cGF0aCBkPSJNMjIgNDQgUTIyIDIwIDUwIDIwIFE3OCAyMCA3OCA0NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ1cmwoI2JvcmRlKSIgc3Ryb2tlLXdpZHRoPSI2IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cmVjdCB4PSIxNSIgeT0iNDAiIHdpZHRoPSI5IiBoZWlnaHQ9IjE4IiByeD0iNCIgZmlsbD0iIzZjNGNmZiIvPgogIDxyZWN0IHg9Ijc2IiB5PSI0MCIgd2lkdGg9IjkiIGhlaWdodD0iMTgiIHJ4PSI0IiBmaWxsPSIjNmM0Y2ZmIi8+CiAgPHJlY3QgeD0iMjIiIHk9IjMyIiB3aWR0aD0iNTYiIGhlaWdodD0iNTAiIHJ4PSIxNiIgZmlsbD0iIzE1MWIzMyIgc3Ryb2tlPSIjMzk0MTZiIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cmVjdCB4PSIzMCIgeT0iNDQiIHdpZHRoPSI0MCIgaGVpZ2h0PSIyNCIgcng9IjkiIGZpbGw9IiMwNTA3MGYiLz4KICA8cmVjdCB4PSIzNyIgeT0iNTEiIHdpZHRoPSI4IiBoZWlnaHQ9IjExIiByeD0iMyIgZmlsbD0iIzAwZTVmZiIvPgogIDxyZWN0IHg9IjU1IiB5PSI1MSIgd2lkdGg9IjgiIGhlaWdodD0iMTEiIHJ4PSIzIiBmaWxsPSIjMDBlNWZmIi8+CiAgPGxpbmUgeDE9IjUwIiB5MT0iMjAiIHgyPSI1MCIgeTI9IjExIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMyIvPgogIDxjaXJjbGUgY3g9IjUwIiBjeT0iOSIgcj0iNC41IiBmaWxsPSIjMDBlNWZmIi8+Cjwvc3ZnPgo=">
+<style>
+  :root {
+    --bg: #070b1a;
+    --bg2: #0d1330;
+    --panel: #111a3a;
+    --panel-2: #172249;
+    --cuerpo: #1f2640;
+    --cuerpo-claro: #2b3558;
+    --texto: #e6ecff;
+    --suave: #8b97c4;
+    --borde: rgba(120, 140, 255, .18);
+    --cian: #00e5ff;
+    --cian-suave: rgba(0, 229, 255, .35);
+    --violeta: #6c4cff;
+    --violeta-2: #9a5cff;
+    --glow: 0 0 24px rgba(0, 229, 255, .25);
+    --sombra: 0 10px 40px rgba(0, 0, 0, .45);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--texto);
+    background:
+      radial-gradient(900px 500px at 15% -10%, rgba(108, 76, 255, .25), transparent 60%),
+      radial-gradient(800px 500px at 110% 110%, rgba(0, 229, 255, .18), transparent 60%),
+      var(--bg);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .5;
+    background-image:
+      linear-gradient(rgba(120, 140, 255, .05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(120, 140, 255, .05) 1px, transparent 1px);
+    background-size: 36px 36px;
+    mask-image: radial-gradient(ellipse at center, #000 40%, transparent 80%);
+  }
+  button, textarea, input { font: inherit; color: inherit; }
+  button { cursor: pointer; transition: transform .15s, box-shadow .2s, background .2s, border-color .2s; }
+  button:active { transform: scale(.97); }
+
+  /* ---------- Robot face (reutilizable) ---------- */
+  .robot {
+    position: relative; display: grid; place-items: center;
+    background: linear-gradient(160deg, #2c3557, #151b33);
+    border: 1px solid rgba(255,255,255,.06);
+    box-shadow: inset 0 2px 6px rgba(255,255,255,.08), 0 6px 18px rgba(0,0,0,.4);
+  }
+  .robot .pantalla {
+    position: absolute; background: #05070f;
+    box-shadow: inset 0 0 0 2px #39416b, 0 0 0 1px rgba(255,255,255,.05);
+  }
+  .robot .ojos { display: flex; gap: 14%; align-items: center; justify-content: center; }
+  .robot .ojo {
+    background: var(--cian); border-radius: 30%;
+    box-shadow: 0 0 10px var(--cian), 0 0 22px rgba(0,229,255,.55);
+    animation: parpadeo 5s infinite;
+  }
+  .robot .ojo.der { animation-delay: .08s; }
+  @keyframes parpadeo {
+    0%, 92%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(.1); }
+  }
+  .robot .auricular {
+    position: absolute; top: -18%; left: -10%; right: -10%; height: 58%;
+    border: 6px solid var(--violeta); border-bottom: 0; border-radius: 999px 999px 0 0;
+    box-shadow: 0 0 14px rgba(108,76,255,.5);
+    pointer-events: none;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; gap: 14px; padding: 12px 22px;
+    background: rgba(13, 19, 48, .75); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--borde);
+  }
+  .avatar { width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0; }
+  .avatar .pantalla { inset: 20% 16%; border-radius: 8px; }
+  .avatar .ojo { width: 6px; height: 9px; }
+  .avatar .ojos { position: absolute; inset: 0; }
+  .avatar .auricular { top: -14%; left: -6%; right: -6%; height: 50%; border-width: 3px; }
+  .marca { flex: 1; min-width: 0; }
+  .marca b { display: block; font-size: 17px; letter-spacing: .3px; }
+  .estado { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--suave); }
+  .punto { width: 7px; height: 7px; border-radius: 50%; background: #3dffa2; box-shadow: 0 0 8px #3dffa2; animation: pulso 2s infinite; }
+  @keyframes pulso { 50% { opacity: .4; } }
+
+  .boton {
+    padding: 8px 14px; border-radius: 10px; border: 1px solid var(--borde);
+    background: rgba(255,255,255,.03); font-size: 14px; font-weight: 500;
+  }
+  .boton:hover { border-color: var(--cian-suave); box-shadow: var(--glow); }
+  .boton.principal {
+    background: linear-gradient(135deg, var(--violeta), var(--cian));
+    border: 0; color: #04101a; font-weight: 700;
+  }
+  .boton.principal:hover { box-shadow: 0 0 22px rgba(0,229,255,.45); }
+
+  /* ---------- Login ---------- */
+  #login-container {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex: 1; gap: 18px; text-align: center; padding: 24px; max-width: 480px; margin: 0 auto; width: 100%;
+  }
+  .login-robot { width: 150px; height: 150px; border-radius: 42px; }
+  .login-robot .pantalla { inset: 26% 18%; border-radius: 22px; }
+  .login-robot .ojo { width: 26px; height: 36px; }
+  .login-robot .auricular { top: -16%; left: -12%; right: -12%; height: 52%; border-width: 10px; }
+  .login-robot .ojos { position: absolute; inset: 0; }
+  #login-container h2 {
+    margin: 6px 0 0; font-size: 28px; letter-spacing: -.3px;
+    background: linear-gradient(90deg, #fff, var(--cian));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  #login-container p { margin: 0; color: var(--suave); line-height: 1.6; font-size: 15px; }
+  .campo {
+    padding: 14px 18px; border-radius: 12px; border: 1px solid var(--borde);
+    background: var(--bg2); font-size: 16px; width: 100%; text-align: center; outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .campo:focus { border-color: var(--cian); box-shadow: var(--glow); }
+  #loginBtn { width: 100%; padding: 14px; font-size: 15px; border-radius: 12px; }
+
+  /* ---------- Chat ---------- */
+  #chat { position: relative; z-index: 1; flex: 1; overflow-y: auto; padding: 28px 18px; display: none; scroll-behavior: smooth; }
+  #mensajes { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+  .fila-msg { display: flex; gap: 10px; align-items: flex-end; animation: entrar .35s ease; }
+  .fila-msg.usuario { justify-content: flex-end; }
+  @keyframes entrar { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .mini-robot { width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0; }
+  .mini-robot .pantalla { inset: 22% 14%; border-radius: 6px; }
+  .mini-robot .ojo { width: 4px; height: 6px; }
+  .mini-robot .ojos { position: absolute; inset: 0; }
+  .mini-robot .auricular { top: -16%; left: -8%; right: -8%; height: 50%; border-width: 2px; }
+
+  .msg {
+    max-width: 78%; padding: 13px 17px; border-radius: 18px; line-height: 1.6;
+    word-break: break-word; font-size: 15px; white-space: pre-wrap;
+  }
+  .usuario.msg {
+    background: linear-gradient(135deg, var(--violeta), #3a5bff);
+    color: #fff; border-bottom-right-radius: 4px; box-shadow: 0 6px 20px rgba(108,76,255,.3);
+  }
+  .eloboth.msg {
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    border: 1px solid var(--borde); border-bottom-left-radius: 4px;
+    box-shadow: var(--sombra); font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-size: 14px;
+  }
+  .eloboth.msg::before {
+    content: "eloboth@chat:~$ "; display: block; color: var(--cian); font-size: 12px; opacity: .8; margin-bottom: 6px;
+  }
+  .eloboth.pensando { color: var(--suave); }
+  .eloboth.pensando::before { content: none; }
+  .puntos span {
+    display: inline-block; width: 6px; height: 6px; margin: 0 3px; border-radius: 50%;
+    background: var(--cian); animation: rebote 1.2s infinite ease-in-out;
+  }
+  .puntos span:nth-child(2) { animation-delay: .15s; }
+  .puntos span:nth-child(3) { animation-delay: .3s; }
+  @keyframes rebote { 0%, 80%, 100% { transform: translateY(0); opacity: .4; } 40% { transform: translateY(-5px); opacity: 1; } }
+
+  pre { background: #05070f; color: #bfe9ff; padding: 14px; border-radius: 10px; overflow-x: auto; border: 1px solid var(--borde); margin: 8px 0 0; }
+  code { font-family: ui-monospace, Consolas, monospace; background: rgba(0,229,255,.08); color: var(--cian); padding: 2px 6px; border-radius: 6px; }
+
+  /* ---------- Entrada ---------- */
+  #entrada {
+    position: relative; z-index: 2;
+    background: rgba(13, 19, 48, .8); backdrop-filter: blur(10px);
+    border-top: 1px solid var(--borde); padding: 16px; display: none;
+  }
+  #entrada .fila {
+    max-width: 860px; margin: 0 auto; display: flex; gap: 10px; align-items: flex-end;
+    background: var(--bg2); border: 1px solid var(--borde); border-radius: 16px; padding: 8px 8px 8px 16px;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  #entrada .fila:focus-within { border-color: var(--cian-suave); box-shadow: var(--glow); }
+  #texto {
+    flex: 1; min-width: 0; resize: none; min-height: 44px; max-height: 180px; padding: 10px 0;
+    border: 0; background: transparent; outline: none;
+  }
+  #texto::placeholder { color: var(--suave); }
+  #enviar { padding: 11px 20px; border-radius: 12px; }
+
+  /* ---------- Layout con barra de conversaciones ---------- */
+  #cuerpo { position: relative; z-index: 1; flex: 1; display: flex; min-height: 0; }
+  #principal { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+  #barra {
+    width: 260px; flex-shrink: 0; display: none; flex-direction: column; gap: 12px; padding: 14px;
+    background: rgba(13, 19, 48, .7); border-right: 1px solid var(--borde); min-height: 0;
+  }
+  body.con-sesion #barra { display: flex; }
+  #barra h3 {
+    margin: 6px 4px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--suave);
+  }
+  #nuevaChat { width: 100%; padding: 10px; border-radius: 12px; }
+  #listaChats { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+  .chat-item {
+    display: flex; align-items: center; gap: 6px; padding: 10px; border-radius: 10px;
+    cursor: pointer; border: 1px solid transparent;
+  }
+  .chat-item:hover { background: rgba(255, 255, 255, .04); }
+  .chat-item.activo { border-color: var(--cian-suave); background: rgba(0, 229, 255, .07); }
+  .chat-item .titulo {
+    flex: 1; min-width: 0; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .chat-item .borrar {
+    background: none; border: 0; color: var(--suave); padding: 2px 6px; border-radius: 6px; font-size: 13px;
+  }
+  .chat-item .borrar:hover { color: #ff6b8a; }
+  @media (max-width: 700px) {
+    #barra { width: 200px; }
+  }
+
+  /* ---------- Imágenes ---------- */
+  .previa {
+    display: flex; align-items: center; gap: 12px; max-width: 860px; margin: 0 auto 10px;
+    padding: 8px; background: var(--bg2); border: 1px solid var(--cian-suave); border-radius: 14px;
+  }
+  .previa[hidden] { display: none !important; }
+  #previaImg { height: 56px; width: auto; border-radius: 8px; border: 1px solid var(--borde); }
+  .previa .boton { margin-left: auto; }
+  .msg-img { display: block; max-width: 100%; max-height: 320px; border-radius: 12px; }
+
+  /* ---------- Robot más lindo (cabeza, pantalla y ojos) ---------- */
+  .robot {
+    background: linear-gradient(160deg, #3a4585, #161d3d 65%, #0c1126);
+    box-shadow:
+      inset 0 2px 8px rgba(255, 255, 255, .18),
+      inset 0 -6px 12px rgba(0, 0, 0, .35),
+      0 8px 26px rgba(0, 229, 255, .28),
+      0 0 0 1px rgba(108, 76, 255, .45);
+  }
+  .robot .pantalla {
+    background: radial-gradient(circle at 50% 30%, #13204a, #05070f 72%);
+    box-shadow: inset 0 0 0 2px #4a5598, inset 0 0 14px rgba(0, 229, 255, .18), 0 0 0 1px rgba(255, 255, 255, .06);
+  }
+  .robot .ojo { animation: parpadeo 5s infinite, brillo-ojo 3s ease-in-out infinite; }
+  .robot .ojo.der { animation-delay: .08s, .4s; }
+  @keyframes brillo-ojo {
+    50% { box-shadow: 0 0 16px var(--cian), 0 0 34px rgba(0, 229, 255, .85); }
+  }
+  .robot .auricular {
+    border-color: #7a5cff;
+    box-shadow: 0 0 18px rgba(108, 76, 255, .75), inset 0 0 8px rgba(0, 229, 255, .25);
+  }
+
+  /* ---------- Botón de pantalla completa (esquina superior derecha) ---------- */
+  .pantalla-btn {
+    width: 42px; height: 42px; padding: 0; flex-shrink: 0; border-radius: 13px;
+    display: grid; place-items: center; font-size: 18px; line-height: 1;
+    background: linear-gradient(135deg, rgba(108, 76, 255, .35), rgba(0, 229, 255, .22));
+    border: 1px solid var(--cian-suave); box-shadow: var(--glow);
+  }
+  .pantalla-btn:hover { box-shadow: 0 0 28px rgba(0, 229, 255, .55); }
+
+  /* ---------- Toques visuales ---------- */
+  header::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+    background: linear-gradient(90deg, var(--violeta), var(--cian), var(--violeta-2), var(--cian));
+    background-size: 200% 100%; animation: brillo 6s linear infinite; opacity: .9;
+  }
+  @keyframes brillo { to { background-position: 200% 0; } }
+  .avatar, .login-robot { animation: flotar 4s ease-in-out infinite; }
+  @keyframes flotar { 50% { transform: translateY(-4px); } }
+  .eloboth.msg { border-left: 3px solid var(--cian); }
+  .usuario.msg { border-bottom-right-radius: 6px; }
+  .msg code, .msg pre { white-space: pre; }
+  .msg pre { white-space: pre-wrap; }
+  #chat::-webkit-scrollbar, #listaChats::-webkit-scrollbar { width: 8px; }
+  #chat::-webkit-scrollbar-thumb, #listaChats::-webkit-scrollbar-thumb { background: var(--cian-suave); border-radius: 8px; }
+  .boton:hover, .chat-item:hover { transform: translateY(-1px); }
+  .copiar {
+    display: block; margin-top: 10px; padding: 4px 10px; border-radius: 8px; font-size: 12px;
+    background: rgba(0, 229, 255, .08); border: 1px solid var(--cian-suave); color: var(--cian);
+  }
+  .copiar:hover { box-shadow: var(--glow); }
+  @media (prefers-reduced-motion: reduce) {
+    header::after, .avatar, .login-robot { animation: none; }
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 600px) {
+    .msg { max-width: 88%; font-size: 14px; }
+    header { padding: 10px 14px; }
+  }
+  /* ---------- Celular y tablet ---------- */
+  @media (max-width: 900px) {
+    #barra { width: 220px; }
+  }
+  @media (max-width: 700px) {
+    #cuerpo { flex-direction: column; }
+    #barra {
+      width: 100%; max-height: 150px; border-right: 0; border-bottom: 1px solid var(--borde);
+      padding: 10px 12px; gap: 8px;
+    }
+    #barra h3 { display: none; }
+    #nuevaChat { width: auto; align-self: flex-start; padding: 8px 14px; }
+    #listaChats { flex-direction: row; overflow-x: auto; overflow-y: hidden; gap: 8px; padding-bottom: 4px; }
+    .chat-item { min-width: 170px; max-width: 220px; flex-shrink: 0; }
+    .msg { max-width: 92%; }
+    #chat { padding: 16px 10px; }
+    #entrada { padding: 10px; }
+    #entrada .fila { padding: 6px 6px 6px 10px; }
+    #enviar { padding: 10px 14px; }
+    .previa { margin: 0 0 8px; }
+    .login-robot { width: 110px; height: 110px; border-radius: 34px; }
+    #login-container h2 { font-size: 22px; }
+    header .marca b { font-size: 15px; }
+    header { padding: 10px 12px; }
+  }
+  @media (max-width: 380px) {
+    #enviar { padding: 10px; }
+    .boton { padding: 7px 10px; font-size: 13px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+[hidden] { display: none !important; }
+.chip-modo {
+  display: inline-block; margin: 0 0 8px 8px; padding: 4px 12px; border-radius: 999px;
+  font-size: 13px; color: #7dd3fc; border: 1px solid #7dd3fc; background: rgba(0, 212, 255, 0.12);
+  user-select: none;
+}
+.aviso-ia { margin: 6px 0 0; text-align: center; font-size: 12px; color: #8b93b0; }
+.menu-modos { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 8px 8px; }
+.menu-modos .boton { font-size: 13px; padding: 6px 12px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="avatar robot">
+    <div class="auricular"></div>
+    <div class="pantalla" style="inset:20% 16%;border-radius:8px;"></div>
+    <div class="ojos"><div class="ojo"></div><div class="ojo der"></div></div>
+  </div>
+  <div class="marca">
+    <b>Eloboth</b>
+    <div class="estado"><span class="punto"></span><span id="userInfo">Sesión no iniciada</span></div>
+  </div>
+  <button class="boton" id="logoutBtn" type="button" style="display:none;">Salir</button>
+  <button class="boton pantalla-btn" id="pantallaBtn" type="button" title="Pantalla completa" aria-label="Pantalla completa">⛶</button>
+</header>
+<script>
+  // Botón de pantalla completa: entra y sale con la API del navegador
+  (function () {
+    const btn = document.getElementById("pantallaBtn");
+    if (!document.documentElement.requestFullscreen) { btn.style.display = "none"; return; }
+    btn.addEventListener("click", () => {
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+      else document.documentElement.requestFullscreen().catch(() => {});
+    });
+    document.addEventListener("fullscreenchange", () => {
+      const grande = Boolean(document.fullscreenElement);
+      btn.textContent = grande ? "✖" : "⛶";
+      btn.title = grande ? "Salir de pantalla completa" : "Pantalla completa";
+      btn.setAttribute("aria-label", btn.title);
+    });
+  })();
+</script>
+
+<div id="cuerpo">
+<aside id="barra">
+  <button class="boton principal" id="nuevaChat" type="button">+ Nueva conversación</button>
+  <h3>Conversaciones</h3>
+  <div id="listaChats"></div>
+</aside>
+<section id="principal">
+<div id="login-container">
+  <div class="login-robot robot">
+    <div class="auricular"></div>
+    <div class="pantalla"></div>
+    <div class="ojos"><div class="ojo"></div><div class="ojo der"></div></div>
+  </div>
+  <h2>¡Hola! Soy Eloboth</h2>
+  <p>Agente inteligente con análisis sintáctico palabra por palabra y memoria persistente en Firestore.</p>
+  <input class="campo" id="nombreUsuario" type="text" placeholder="Escribe tu nombre">
+  <button class="boton principal" id="loginBtn" type="button">Iniciar sesión</button>
+</div>
+
+<main id="chat"><div id="mensajes"></div></main>
+
+<form id="entrada">
+  <div id="previa" class="previa" hidden>
+    <img id="previaImg" alt="Vista previa">
+    <button type="button" class="boton" id="quitarImg">Quitar</button>
+  </div>
+  <div id="chipModo" class="chip-modo" hidden></div>
+  <div id="menuModos" class="menu-modos" hidden>
+    <button type="button" class="boton" data-modo="normal">Chat normal</button>
+    <button type="button" class="boton" data-modo="cuadro">Crear cuadro comparativo</button>
+    <button type="button" class="boton" data-modo="cuento">Crear cuento</button>
+  </div>
+  <div class="fila">
+    <button type="button" class="boton" id="adjuntar" title="Adjuntar archivo">📎</button>
+    <input type="file" id="archivoInput" hidden>
+    <textarea id="texto" rows="1" placeholder="Escribe tu mensaje o: Aprende que X significa Y"></textarea>
+    <button type="button" class="boton" id="modosBtn" title="Elegir modo">Modos</button>
+    <button class="boton principal" id="enviar" type="submit">Enviar</button>
+  </div>
+  <p class="aviso-ia">Eloboth es una IA y puede cometer errores.</p>
+</form>
+</section>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDrOCa17n2IqDH4_UcBmFHLejsxfh4Ihcs",
+  authDomain: "elboth-server.firebaseapp.com",
+  projectId: "elboth-server",
+  storageBucket: "elboth-server.firebasestorage.app",
+  messagingSenderId: "73743894774",
+  appId: "1:73743894774:web:0f8c2e98c94da1535044d7",
+};
+
+let db = null;
+try {
+  db = getFirestore(initializeApp(FIREBASE_CONFIG));
+} catch (e) {
+  console.warn("Error al conectar con Firestore:", e);
+}
+
+const loginContainer = document.getElementById("login-container");
+const chatSection = document.getElementById("chat");
+const entradaForm = document.getElementById("entrada");
+const userInfo = document.getElementById("userInfo");
+const logoutBtn = document.getElementById("logoutBtn");
+const loginBtn = document.getElementById("loginBtn");
+const nombreInput = document.getElementById("nombreUsuario");
+const mensajes = document.getElementById("mensajes");
+const texto = document.getElementById("texto");
+const chipModo = document.getElementById("chipModo");
+const menuModos = document.getElementById("menuModos");
+let modoActivo = null; // null = chat normal; si no, el modo queda fijo hasta cambiarlo
+const MODOS = {
+  cuadro: { prefijo: "crear cuadro comparativo", etiqueta: "Crear cuadro comparativo" },
+  cuento: { prefijo: "crear cuento", etiqueta: "Crear cuento" },
+};
+function fijarModo(clave) {
+  modoActivo = MODOS[clave] || null;
+  chipModo.hidden = !modoActivo;
+  if (modoActivo) chipModo.textContent = modoActivo.etiqueta + " (automático)";
+  menuModos.hidden = true;
+  texto.focus();
+}
+document.getElementById("modosBtn").onclick = () => { menuModos.hidden = !menuModos.hidden; };
+menuModos.querySelectorAll("[data-modo]").forEach((b) => {
+  b.onclick = () => fijarModo(b.dataset.modo);
+});
+
+// Almacenamiento seguro: si localStorage está bloqueado (iframes, modo privado),
+// usa memoria para que el inicio de sesión funcione igualmente.
+const almacen = (() => {
+  try {
+    localStorage.setItem("__test__", "1");
+    localStorage.removeItem("__test__");
+    return localStorage;
+  } catch (e) {
+    const mem = {};
+    return {
+      getItem: (k) => (k in mem ? mem[k] : null),
+      setItem: (k, v) => { mem[k] = String(v); },
+      removeItem: (k) => { delete mem[k]; },
+    };
+  }
+})();
+
+let usuarioActual = almacen.getItem("eloboth_usuario");
+
+const MINI_ROBOT = `<div class="mini-robot robot"><div class="auricular"></div><div class="pantalla"></div><div class="ojos"><div class="ojo"></div><div class="ojo der"></div></div></div>`;
+
+function actualizarInterfaz() {
+  document.body.classList.toggle("con-sesion", !!usuarioActual);
+  if (usuarioActual) {
+    userInfo.textContent = `Usuario: ${usuarioActual}`;
+    loginContainer.style.display = "none";
+    chatSection.style.display = "block";
+    entradaForm.style.display = "block";
+    logoutBtn.style.display = "inline-block";
+  } else {
+    userInfo.textContent = "Sesión no iniciada";
+    loginContainer.style.display = "flex";
+    chatSection.style.display = "none";
+    entradaForm.style.display = "none";
+    logoutBtn.style.display = "none";
+  }
+}
+
+nombreInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") loginBtn.click();
+});
+
+loginBtn.onclick = () => {
+  const val = nombreInput.value.trim();
+  if (!val) {
+    nombreInput.placeholder = "Primero escribe tu nombre";
+    nombreInput.focus();
+    return;
+  }
+  usuarioActual = val;
+  almacen.setItem("eloboth_usuario", usuarioActual);
+  nombreInput.value = "";
+  cargarChats();
+  actualizarInterfaz();
+  renderizarBarra();
+  renderizarMensajes();
+  if (!chatActual().mensajes.length) {
+    agregarMensaje(`¡Hola, ${usuarioActual}! Soy Eloboth. Estoy listo para procesar e ir aprendiendo nuevos conceptos.`, "eloboth");
+  }
+};
+
+logoutBtn.onclick = () => {
+  almacen.removeItem("eloboth_usuario");
+  usuarioActual = null;
+  mensajes.innerHTML = "";
+  estado = { activo: null, chats: [] };
+  listaChats.innerHTML = "";
+  actualizarInterfaz();
+};
+
+// ---------- Conversaciones (guardadas en este navegador, por usuario) ----------
+const listaChats = document.getElementById("listaChats");
+let estado = { activo: null, chats: [] };
+const TITULO_BASE = "Nueva conversación";
+
+function claveChats() { return "eloboth_chats_" + usuarioActual; }
+
+function guardarChats() {
+  try {
+    almacen.setItem(claveChats(), JSON.stringify(estado));
+  } catch (e) {
+    console.warn("No se pudieron guardar las conversaciones:", e);
+  }
+}
+
+function nuevoId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+function chatActual() {
+  return estado.chats.find((c) => c.id === estado.activo);
+}
+
+function cargarChats() {
+  try {
+    estado = JSON.parse(almacen.getItem(claveChats())) || { activo: null, chats: [] };
+  } catch (e) {
+    estado = { activo: null, chats: [] };
+  }
+  if (!Array.isArray(estado.chats)) estado.chats = [];
+  if (estado.chats.length === 0) {
+    estado.chats.push({ id: nuevoId(), titulo: TITULO_BASE, mensajes: [] });
+  }
+  if (!estado.chats.some((c) => c.id === estado.activo)) {
+    estado.activo = estado.chats[0].id;
+  }
+  guardarChats();
+}
+
+function renderizarBarra() {
+  listaChats.innerHTML = "";
+  for (const c of estado.chats) {
+    const item = document.createElement("div");
+    item.className = "chat-item" + (c.id === estado.activo ? " activo" : "");
+    const titulo = document.createElement("span");
+    titulo.className = "titulo";
+    titulo.textContent = c.titulo;
+    const borrar = document.createElement("button");
+    borrar.className = "borrar";
+    borrar.type = "button";
+    borrar.title = "Eliminar conversación";
+    borrar.textContent = "✕";
+    borrar.onclick = (e) => {
+      e.stopPropagation();
+      eliminarChat(c.id);
+    };
+    item.append(titulo, borrar);
+    item.onclick = () => cambiarChat(c.id);
+    listaChats.appendChild(item);
+  }
+}
+
+function renderizarMensajes() {
+  mensajes.innerHTML = "";
+  const c = chatActual();
+  if (c) c.mensajes.forEach((m) => pintarMensaje(m.texto, m.clase));
+  chatSection.scrollTop = chatSection.scrollHeight;
+}
+
+function cambiarChat(id) {
+  estado.activo = id;
+  guardarChats();
+  renderizarBarra();
+  renderizarMensajes();
+}
+
+function crearChat() {
+  const chat = { id: nuevoId(), titulo: TITULO_BASE, mensajes: [] };
+  estado.chats.unshift(chat);
+  cambiarChat(chat.id);
+  texto.focus();
+}
+
+function eliminarChat(id) {
+  const idx = estado.chats.findIndex((c) => c.id === id);
+  if (idx === -1) return;
+  estado.chats.splice(idx, 1);
+  if (estado.chats.length === 0) {
+    estado.chats.push({ id: nuevoId(), titulo: TITULO_BASE, mensajes: [] });
+  }
+  if (estado.activo === id) estado.activo = estado.chats[0].id;
+  guardarChats();
+  renderizarBarra();
+  renderizarMensajes();
+}
+
+document.getElementById("nuevaChat").onclick = () => crearChat();
+
+function agregarMensaje(textoMsj, clase) {
+  const transitorio = clase.includes("pensando");
+  const fila = pintarMensaje(textoMsj, clase);
+  if (!transitorio) {
+    const c = chatActual();
+    if (c) {
+      if (clase === "usuario" && c.titulo === TITULO_BASE && textoMsj) {
+        c.titulo = textoMsj.slice(0, 32) + (textoMsj.length > 32 ? "…" : "");
+      }
+      c.mensajes.push({ texto: textoMsj, clase });
+      guardarChats();
+      renderizarBarra();
+    }
+  }
+  return fila;
+}
+
+function pintarMensaje(textoMsj, clase) {
+  const fila = document.createElement("div");
+  fila.className = "fila-msg " + (clase === "usuario" ? "usuario" : "");
+  if (clase !== "usuario") fila.insertAdjacentHTML("beforeend", MINI_ROBOT);
+  const div = document.createElement("div");
+  div.className = "msg " + clase;
+  if (clase.includes("svg")) {
+    div.innerHTML = textoMsj; // solo dibujos predefinidos del código
+  } else {
+    div.textContent = textoMsj;
+  }
+  fila.appendChild(div);
+
+  // Botón para copiar la respuesta de Eloboth (no aparece en los mensajes del usuario ni en dibujos)
+  if (clase !== "usuario" && !clase.includes("svg") && !clase.includes("pensando")) {
+    const copiar = document.createElement("button");
+    copiar.type = "button";
+    copiar.className = "copiar";
+    copiar.textContent = "📋 Copiar";
+    copiar.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(textoMsj);
+        copiar.textContent = "✅ Copiado";
+      } catch (e) {
+        copiar.textContent = "No se pudo copiar";
+      }
+      setTimeout(() => { copiar.textContent = "📋 Copiar"; }, 1500);
+    };
+    div.appendChild(copiar);
+  }
+
+  // Si el mensaje trae un bloque HTML, se puede ejecutar aislado en un marco dentro de la página
+  const bloqueHtml = !clase.includes("svg") && textoMsj.match(/```html\n([\s\S]*?)\n```/);
+  if (bloqueHtml) {
+    const contenedor = document.createElement("div");
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.className = "boton";
+    boton.style.marginTop = "10px";
+    boton.textContent = "▶ Ejecutar en esta página";
+    boton.onclick = () => {
+      if (contenedor.firstChild) {
+        contenedor.innerHTML = "";
+        boton.textContent = "▶ Ejecutar en esta página";
+      } else {
+        const marco = document.createElement("iframe");
+        marco.setAttribute("sandbox", "allow-scripts");
+        marco.srcdoc = bloqueHtml[1];
+        marco.style.cssText = "width:100%;height:360px;border:1px solid var(--borde);border-radius:12px;margin-top:10px;background:#fff;";
+        contenedor.appendChild(marco);
+        boton.textContent = "✖ Ocultar";
+      }
+    };
+    div.appendChild(boton);
+    div.appendChild(contenedor);
+  }
+  mensajes.appendChild(fila);
+  chatSection.scrollTop = chatSection.scrollHeight;
+  return fila;
+}
+
+function normalizarTexto(str) {
+  return str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s]/g, "")
+    .trim();
+}
+
+function tokenizarPalabras(str) {
+  const norm = normalizarTexto(str);
+  return norm ? norm.split(/\s+/) : [];
+}
+
+
+async function buscarMemoriaAprendida(termino) {
+  const mapa = await cargarMemoriaMapa();
+  return mapa.get(normalizarTexto(termino)) || null;
+}
+
+async function buscarMemoriaAntigua(termino) {
+  if (!db) return null;
+  try {
+    const querySnapshot = await getDocs(collection(db, "eloboth_aprendizajes"));
+    const busquedaNorm = normalizarTexto(termino);
+    for (const docSnap of querySnapshot.docs) {
+      const data = docSnap.data();
+      if (data.palabra && normalizarTexto(data.palabra) === busquedaNorm) {
+        return data.definicion;
+      }
+    }
+  } catch (err) {
+    console.error("Error al consultar la memoria de Firestore:", err);
+  }
+  return null;
+}
+
+async function guardarAprendizajeFirestore(palabra, definicion) {
+  if (!db) {
+    console.error("La base de datos Firestore no está inicializada.");
+    return { ok: false, error: "Base de datos no disponible." };
+  }
+  try {
+    await addDoc(collection(db, "eloboth_aprendizajes"), {
+      palabra: palabra.trim(),
+      palabraNorm: normalizarTexto(palabra),
+      definicion: definicion.trim(),
+      usuario: usuarioActual || "Anónimo",
+      fecha: new Date().toISOString()
+    });
+    if (memoriaCache) memoriaCache.set(normalizarTexto(palabra), definicion.trim());
+    return { ok: true };
+  } catch (err) {
+    console.error("Error al escribir en Firestore:", err);
+    return { ok: false, error: err.message };
+  }
+}
+
+function generarListaMasivaOraciones(palabra) {
+  const patrones = [
+    `El concepto de ${palabra} es esencial en el análisis contemporáneo.`,
+    `A través de ${palabra}, logramos estructurar ideas de manera clara y precisa.`,
+    `¿Cómo influye ${palabra} en el desarrollo de nuestras tareas cotidianas?`,
+    `Al aplicar ${palabra} correctamente, se optimizan los resultados deseados.`,
+    `El estudio profundo sobre ${palabra} permite comprender mejor su contexto.`,
+    `Integrar ${palabra} fortalece la consistencia del mensaje formulado.`,
+    `Cada aspecto relacionado con ${palabra} aporta un valor significativo al conjunto.`,
+    `La correcta interpretación de ${palabra} evita confusiones en la comunicación.`
+  ];
+
+  let resultado = `📄 Generación masiva de 1,000 oraciones para "${palabra}":\n\n`;
+  for (let i = 1; i <= 1000; i++) {
+    const patron = patrones[(i - 1) % patrones.length];
+    resultado += `${i}. ${patron} (Variación #${i})\n`;
+  }
+  return resultado;
+}
+
+// ---------- Conjugaciones integradas (30 verbos) ----------
+// pres = presente, pret = pretérito indefinido. imp (pretérito imperfecto), fut (raíz del futuro)
+// se derivan por regla cuando el verbo es regular.
+const CONJUGACIONES = {
+  ser:      { pres: "soy eres es somos sois son", pret: "fui fuiste fue fuimos fuisteis fueron", imp: "era eras era éramos erais eran", fut: "ser" },
+  estar:    { pres: "estoy estás está estamos estáis están", pret: "estuve estuviste estuvo estuvimos estuvisteis estuvieron", fut: "estar" },
+  tener:    { pres: "tengo tienes tiene tenemos tenéis tienen", pret: "tuve tuviste tuvo tuvimos tuvisteis tuvieron", fut: "tendr" },
+  hacer:    { pres: "hago haces hace hacemos hacéis hacen", pret: "hice hiciste hizo hicimos hicisteis hicieron", fut: "har" },
+  ir:       { pres: "voy vas va vamos vais van", pret: "fui fuiste fue fuimos fuisteis fueron", imp: "iba ibas iba íbamos ibais iban", fut: "ir" },
+  venir:    { pres: "vengo vienes viene venimos venís vienen", pret: "vine viniste vino vinimos vinisteis vinieron", fut: "vendr" },
+  decir:    { pres: "digo dices dice decimos decís dicen", pret: "dije dijiste dijo dijimos dijisteis dijeron", fut: "dir" },
+  poder:    { pres: "puedo puedes puede podemos podéis pueden", pret: "pude pudiste pudo pudimos pudisteis pudieron", fut: "podr" },
+  querer:   { pres: "quiero quieres quiere queremos queréis quieren", pret: "quise quisiste quiso quisimos quisisteis quisieron", fut: "querr" },
+  saber:    { pres: "sé sabes sabe sabemos sabéis saben", pret: "supe supiste supo supimos supisteis supieron", fut: "sabr" },
+  dar:      { pres: "doy das da damos dais dan", pret: "di diste dio dimos disteis dieron", imp: "daba dabas daba dábamos dabais daban", fut: "dar" },
+  ver:      { pres: "veo ves ve vemos veis ven", pret: "vi viste vio vimos visteis vieron", imp: "veía veías veía veíamos veíais veían", fut: "ver" },
+  oír:      { pres: "oigo oyes oye oímos oís oyen", pret: "oí oíste oyó oímos oísteis oyeron", fut: "oir" },
+  hablar:   { pres: "hablo hablas habla hablamos habláis hablan", pret: "hablé hablaste habló hablamos hablasteis hablaron" },
+  comer:    { pres: "como comes come comemos coméis comen", pret: "comí comiste comió comimos comisteis comieron" },
+  beber:    { pres: "bebo bebes bebe bebemos bebéis beben", pret: "bebí bebiste bebió bebimos bebisteis bebieron" },
+  dormir:   { pres: "duermo duermes duerme dormimos dormís duermen", pret: "dormí dormiste durmió dormimos dormisteis durmieron" },
+  pensar:   { pres: "pienso piensas piensa pensamos pensáis piensan", pret: "pensé pensaste pensó pensamos pensasteis pensaron" },
+  leer:     { pres: "leo lees lee leemos leéis leen", pret: "leí leíste leyó leímos leísteis leyeron" },
+  escribir: { pres: "escribo escribes escribe escribimos escribís escriben", pret: "escribí escribiste escribió escribimos escribisteis escribieron" },
+  correr:   { pres: "corro corres corre corremos corréis corren", pret: "corrí corriste corrió corrimos corristeis corrieron" },
+  caminar:  { pres: "camino caminas camina caminamos camináis caminan", pret: "caminé caminaste caminó caminamos caminasteis caminaron" },
+  comprar:  { pres: "compro compras compra compramos compráis compran", pret: "compré compraste compró compramos comprasteis compraron" },
+  vender:   { pres: "vendo vendes vende vendemos vendéis venden", pret: "vendí vendiste vendió vendimos vendisteis vendieron" },
+  estudiar: { pres: "estudio estudias estudia estudiamos estudiáis estudian", pret: "estudié estudiaste estudió estudiamos estudiasteis estudiaron" },
+  trabajar: { pres: "trabajo trabajas trabaja trabajamos trabajáis trabajan", pret: "trabajé trabajaste trabajó trabajamos trabajasteis trabajaron" },
+  jugar:    { pres: "juego juegas juega jugamos jugáis juegan", pret: "jugué jugaste jugó jugamos jugasteis jugaron" },
+  crear:    { pres: "creo creas crea creamos creáis crean", pret: "creé creaste creó creamos creasteis crearon" },
+  buscar:   { pres: "busco buscas busca buscamos buscáis buscan", pret: "busqué buscaste buscó buscamos buscasteis buscaron" },
+  encontrar:{ pres: "encuentro encuentras encuentra encontramos encontráis encuentran", pret: "encontré encontraste encontró encontramos encontrasteis encontraron" },
+  empezar:  { pres: "empiezo empiezas empieza empezamos empezáis empiezan", pret: "empecé empezaste empezó empezamos empezasteis empezaron" },
+  terminar: { pres: "termino terminas termina terminamos termináis terminan", pret: "terminé terminaste terminó terminamos terminasteis terminaron" }
+};
+
+const PERSONAS = ["yo", "tú", "él/ella", "nosotros", "vosotros", "ellos"];
+const TIEMPOS = {
+  pres: "presente de indicativo",
+  pret: "pretérito indefinido",
+  imp: "pretérito imperfecto",
+  fut: "futuro simple",
+  cond: "condicional simple"
+};
+const TERM_FUT = ["é", "ás", "á", "emos", "éis", "án"];
+const TERM_COND = ["ía", "ías", "ía", "íamos", "íais", "ían"];
+const TERM_IMP_AR = ["aba", "abas", "aba", "ábamos", "abais", "aban"];
+
+function construirIndiceConjugaciones() {
+  const indice = new Map();
+  const agregar = (forma, verbo, tiempo, i) => {
+    const k = normalizarTexto(forma);
+    if (!indice.has(k)) indice.set(k, []);
+    indice.get(k).push({ verbo, tiempo, persona: PERSONAS[i] });
+  };
+
+  for (const [verbo, d] of Object.entries(CONJUGACIONES)) {
+    const raizBase = verbo.slice(0, -2);
+    const raizFut = d.fut || verbo;
+    const formas = {
+      pres: d.pres.split(" "),
+      pret: d.pret.split(" "),
+      imp: d.imp
+        ? d.imp.split(" ")
+        : (verbo.endsWith("ar") ? TERM_IMP_AR : ["ía", "ías", "ía", "íamos", "íais", "ían"]).map((t) => raizBase + t),
+      fut: TERM_FUT.map((t) => raizFut + t),
+      cond: TERM_COND.map((t) => raizFut + t)
+    };
+    for (const tiempo of Object.keys(formas)) {
+      formas[tiempo].forEach((forma, i) => agregar(forma, verbo, tiempo, i));
+    }
+  }
+  return indice;
+}
+
+const INDICE_CONJ = construirIndiceConjugaciones();
+
+// ---------- Interpretación palabra por palabra ----------
+// La memoria se lee de Firestore una sola vez por sesión y después se consulta en local
+let memoriaCache = null;
+async function cargarMemoriaMapa() {
+  if (memoriaCache) return memoriaCache;
+  const mapa = new Map();
+  memoriaCache = mapa;
+  if (!db) return mapa;
+  try {
+    const snap = await getDocs(collection(db, "eloboth_aprendizajes"));
+    snap.docs.forEach((d) => {
+      const data = d.data();
+      if (data.palabra) mapa.set(normalizarTexto(data.palabra), data.definicion);
+    });
+  } catch (err) {
+    console.error("Error al cargar la memoria:", err);
+    memoriaCache = null;
+  }
+  return mapa;
+}
+
+function significadosDePalabra(palabra, memoria) {
+  const out = [];
+  if (memoria.has(palabra)) {
+    out.push({ fuente: "memoria", texto: memoria.get(palabra) });
+  }
+  const hits = INDICE_CONJ.get(palabra);
+  if (hits) {
+    out.push({
+      fuente: "conjugación",
+      texto: hits.map((h) => `${TIEMPOS[h.tiempo]}, ${h.persona} de ${h.verbo}`).join("; ")
+    });
+  }
+  return out;
+}
+
+async function interpretarOracion(msgOriginal) {
+  const palabrasOriginales = msgOriginal.split(/\s+/).filter(Boolean);
+  const memoria = await cargarMemoriaMapa();
+  const conocidas = [];
+  const desconocidas = [];
+
+  for (const original of palabrasOriginales) {
+    const norm = normalizarTexto(original);
+    if (!norm) continue;
+    const sig = significadosDePalabra(norm, memoria);
+    if (sig.length) {
+      conocidas.push({ palabra: original, sig });
+    } else {
+      desconocidas.push(original);
+    }
+  }
+
+  if (conocidas.length === 0) return null;
+
+  const detalle = conocidas.map((c) => `• "${c.palabra}": ${c.sig.map((s) => s.texto).join(" | ")}`);
+  const combinado = conocidas.map((c) => c.sig[0].texto).join(" + ");
+
+  const PALABRAS_INTERROGATIVAS = ["que", "quien", "quienes", "cual", "cuales", "como", "donde", "adonde", "cuando", "cuanto", "cuanta", "cuantos", "cuantas", "por", "para"];
+  const primera = normalizarTexto(palabrasOriginales[0] || "");
+  const esPregunta = PALABRAS_INTERROGATIVAS.includes(primera) || msgOriginal.includes("?");
+  const tipo = esPregunta ? "pregunta" : "enunciado";
+  const contexto = esPregunta
+    ? "Estás preguntando por algo; busco la definición de cada palabra para responder."
+    : "Es una afirmación; reviso el significado de cada palabra para entenderla.";
+
+  let resp = `🧩 Análisis de tu ${tipo}\n\n📝 Palabra por palabra:\n${detalle.join("\n")}`;
+  resp += `\n\n🔗 Significado combinado: ${combinado}`;
+  resp += `\n\n🧭 Contexto: ${contexto}`;
+  if (desconocidas.length) {
+    resp += `\n\n❓ No conozco: ${desconocidas.map((d) => `"${d}"`).join(", ")}. Puedes enseñármelas con "Aprende que X significa Y".`;
+  } else {
+    resp += "\n\n✅ Conozco todas las palabras de tu oración.";
+  }
+  return resp;
+}
+
+// ---------- Respuesta final tras mostrar el proceso ----------
+// Palabras que no aportan tema (artículos, preposiciones, verbos auxiliares)
+const PALABRAS_VACIAS = ["la", "el", "los", "las", "un", "una", "unos", "unas", "de", "del", "al", "a", "y", "o", "en", "por", "para", "con", "le", "lo", "me", "te", "se", "su", "sus", "mi", "tu", "que", "es", "fue", "son", "era", "eso", "esto", "esa", "ese"];
+
+// Toma la última frase de palabras desconocidas, que suele ser el tema de la pregunta
+function temaDesconocido(palabras, memoria) {
+  const tema = [];
+  for (let i = palabras.length - 1; i >= 0; i--) {
+    const limpia = palabras[i].replace(/[¿?¡!.,;:]/g, "");
+    const n = normalizarTexto(limpia);
+    if (!n) continue;
+    if (PALABRAS_VACIAS.includes(n)) {
+      if (tema.length) break;
+      continue;
+    }
+    if (significadosDePalabra(n, memoria).length) break;
+    tema.unshift(limpia);
+  }
+  return tema.length ? tema.join(" ") : null;
+}
+
+
+let progreso = () => {};
+let busquedaPendiente = null; // tema que Eloboth ofreció buscar
+let htmlPendiente = false; // Eloboth preguntó qué debe tener el HTML que le pidieron
+
+// Búsqueda en Google con la Custom Search JSON API (gratis, ~100 consultas/día).
+// Pon tu clave y el ID del buscador aquí. Si quedan vacíos, se entrega solo el enlace.
+const GOOGLE_API_KEY = "";
+const GOOGLE_CX = "";
+// Worker de Cloudflare (sin claves): busca en Brave y lee la página del primer resultado
+const WORKER_URL = "https://eloboth.maximojosfal.workers.dev";
+// Significado desde Wikipedia en español (sin clave; se puede leer desde la página)
+// Primer artículo de Wikipedia en español para el tema: solo su mini descripción
+async function buscarPrimerArticulo(tema) {
+  const busqueda = `https://es.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(tema)}&srlimit=1&format=json&origin=*`;
+  const r = await fetch(busqueda);
+  if (!r.ok) return null;
+  const titulo = ((await r.json())?.query?.search || [])[0]?.title;
+  if (!titulo) return null;
+  const url = `https://es.wikipedia.org/w/api.php?action=query&prop=description|extracts&exintro=1&explaintext=1&redirects=1&titles=${encodeURIComponent(titulo)}&format=json&origin=*`;
+  const rr = await fetch(url);
+  if (!rr.ok) return null;
+  const pagina = Object.values((await rr.json())?.query?.pages || {})[0];
+  if (!pagina) return null;
+  let descripcion = pagina.description;
+  if (!descripcion && pagina.extract) {
+    descripcion = pagina.extract.replace(/\s+/g, " ").trim().split(/(?<=\.)\s+/)[0];
+  }
+  if (!descripcion) return null;
+  const detalle = pagina.extract ? pagina.extract.replace(/\s+/g, " ").trim().split(/(?<=\.)\s+/).slice(0, 2).join(" ") : "";
+  return `📖 ${pagina.title}: ${descripcion}${detalle && detalle !== descripcion ? `. ${detalle}` : ""}`;
+}
+
+// Texto de introducción de un artículo de Wikipedia en español
+async function introWikipedia(titulo) {
+  const url = `https://es.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=1&explaintext=1&redirects=1&titles=${encodeURIComponent(titulo)}&format=json&origin=*`;
+  const r = await fetch(url);
+  if (!r.ok) return null;
+  const pagina = Object.values((await r.json())?.query?.pages || {})[0];
+  if (!pagina || !pagina.extract) return null;
+  return { titulo: pagina.title, texto: pagina.extract.replace(/\s+/g, " ").trim() };
+}
+
+// Sinónimos: frases del artículo como "también llamada X", "conocido como X" o "sinónimo de X"
+const PALABRAS_NO_SINONIMO = new Set(["de","la","el","los","las","un","una","en","y","o","a","del","al","que","por","su","sus","se","con","es","son","fue","era","esta","está","puede","pueden","tambien","también","llamado","llamada"]);
+async function buscarSinonimos(palabra) {
+  const p = (palabra || "").trim().toLowerCase();
+  if (!p || /\s/.test(p)) return [];
+  const intro = await introWikipedia(p);
+  if (!intro) return [];
+  const patron = /(?:tambi[eé]n (?:conocid[oa]|llamad[oa]|denominad[oa])(?: como)?|conocid[oa] como|llamad[oa] como|llamad[oa]|denominad[oa]|sin[oó]nimo de|o bien)\s+(?:la\s+|el\s+|los\s+|las\s+)?([a-záéíóúñ]+)/gi;
+  const encontrados = [];
+  for (const m of intro.texto.matchAll(patron)) {
+    const w = m[1];
+    const wl = w.toLowerCase();
+    if (!PALABRAS_NO_SINONIMO.has(wl) && wl !== p && !encontrados.some((x) => x.toLowerCase() === wl)) encontrados.push(w);
+  }
+  return encontrados.slice(0, 3);
+}
+
+// Wikidata en español: descripción corta de la entidad (sin clave)
+async function buscarWikidata(palabra) {
+  const p = (palabra || "").trim();
+  if (!p) return null;
+  const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(p)}&language=es&uselang=es&type=item&limit=1&format=json&origin=*`;
+  const r = await fetch(url);
+  if (!r.ok) return null;
+  const primero = ((await r.json())?.search || [])[0];
+  if (!primero || !primero.description) return null;
+  return `📚 ${primero.label}: ${primero.description}`;
+}
+
+// Wikcionario en español: definiciones numeradas de la sección en español
+async function buscarWikcionario(palabra) {
+  const p = (palabra || "").trim().toLowerCase();
+  if (!p || /\s/.test(p)) return null;
+  const url = `https://es.wiktionary.org/w/api.php?action=parse&page=${encodeURIComponent(p)}&prop=wikitext&format=json&formatversion=2&redirects=1&origin=*`;
+  const r = await fetch(url);
+  if (!r.ok) return null;
+  const wikitext = (await r.json())?.parse?.wikitext;
+  if (!wikitext) return null;
+  return extraerDefinicionesWikcionario(wikitext, p);
+}
+
+function limpiarWikcionario(t) {
+  return t
+    .replace(/\{\{[^{}]*\}\}/g, "")
+    .replace(/\[\[(?:[^|\]]*\|)?([^\]]*)\]\]/g, "$1")
+    .replace(/'{2,}/g, "")
+    .replace(/<[^>]+>/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extraerDefinicionesWikcionario(wikitext, palabra) {
+  let enEspanol = false;
+  let categoria = "";
+  const salida = [];
+  for (const linea of wikitext.split("\n")) {
+    const nivel2 = linea.match(/^==\s*([^=].*?)\s*==\s*$/);
+    if (nivel2) {
+      if (salida.length) break;
+      enEspanol = /lengua\|es|español/i.test(nivel2[1]);
+      categoria = "";
+      continue;
+    }
+    if (!enEspanol) continue;
+    const nivel3 = linea.match(/^===\s*(.*?)\s*===\s*$/);
+    if (nivel3) {
+      categoria = nivel3[1].replace(/\{\{|\}\}/g, "").replace(/\|es/g, "").trim();
+      continue;
+    }
+    const def = linea.match(/^#\s+(?![:*#])(.+)$/);
+    if (def) {
+      const texto = limpiarWikcionario(def[1]);
+      if (texto) salida.push(categoria ? `(${categoria}) ${texto}` : texto);
+      if (salida.length >= 3) break;
+    }
+  }
+  return salida.length ? `📖 ${palabra}:\n${salida.join("\n")}` : null;
+}
+
+// Respuesta completa: párrafo general + "Aspectos destacados" tomados de las secciones del artículo
+const SECCIONES_OMITIDAS = /^(referencias|enlaces externos|v[ée]ase tambi[ée]n|bibliograf[ií]a|notas|fuentes|ver tambi[ée]n)/i;
+
+function armarRespuestaCompleta(titulo, textoCompleto) {
+  const partes = textoCompleto.split(/\n==+\s*(.+?)\s*==+\n/);
+  // partes[0] = introducción; luego pares [titulo de sección, contenido]
+  const intro = partes[0].replace(/\s+/g, " ").trim();
+  if (!intro) return null;
+  const introFrases = intro.split(/(?<=\.)\s+/).slice(0, 4).join(" ");
+  const destacados = [];
+  for (let i = 1; i < partes.length - 1 && destacados.length < 4; i += 2) {
+    const nombre = partes[i].trim();
+    if (SECCIONES_OMITIDAS.test(nombre)) continue;
+    const contenido = partes[i + 1].replace(/\s+/g, " ").trim();
+    if (!contenido) continue;
+    const frases = contenido.split(/(?<=\.)\s+/).slice(0, 2).join(" ");
+    destacados.push(`• ${nombre}: ${frases}`);
+  }
+  const bloques = [`📖 ${titulo}\n${introFrases}`];
+  if (destacados.length) bloques.push(`Aspectos destacados:\n${destacados.join("\n")}`);
+  return bloques.join("\n\n");
+}
+
+async function respuestaCompleta(tema) {
+  const p = (tema || "").trim();
+  if (!p) return null;
+  const busqueda = `https://es.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(p)}&srlimit=1&format=json&origin=*`;
+  const rb = await fetch(busqueda);
+  if (!rb.ok) return null;
+  const titulo = ((await rb.json())?.query?.search || [])[0]?.title;
+  if (!titulo) return null;
+  const url = `https://es.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&redirects=1&titles=${encodeURIComponent(titulo)}&format=json&origin=*`;
+  const r = await fetch(url);
+  if (!r.ok) return null;
+  const pagina = Object.values((await r.json())?.query?.pages || {})[0];
+  if (!pagina || !pagina.extract) return null;
+  return armarRespuestaCompleta(pagina.title, pagina.extract.slice(0, 30000));
+}
+
+// Definición de la palabra; si no existe, la de un sinónimo
+// Definición de una palabra en todas las fuentes: Wikipedia, Wikcionario y Wikidata
+async function definicionEnTodas(palabra) {
+  const wiki = await buscarDiccionario(palabra).catch(() => null);
+  if (wiki) return wiki;
+  const wikcionario = await buscarWikcionario(palabra).catch(() => null);
+  if (wikcionario) return wikcionario;
+  const wikidata = await buscarWikidata(palabra).catch(() => null);
+  if (wikidata) return wikidata;
+  return null;
+}
+
+async function definirOSinonimo(palabra) {
+  // 1) La palabra en todas las fuentes
+  const directa = await definicionEnTodas(palabra);
+  if (directa) return directa;
+  // 2) No hay definición: busca sinónimos y la definición del sinónimo en todas las fuentes
+  const sinonimos = await buscarSinonimos(palabra).catch(() => []);
+  for (const sin of sinonimos) {
+    const def = await definicionEnTodas(sin);
+    if (def) return `"${palabra}" no está en mis fuentes. Un sinónimo es "${sin}":\n${def}`;
+  }
+  // Si no hay definición ni sinónimo, muestra los 3 primeros artículos
+  const primero = await buscarPrimerArticulo(palabra).catch(() => null);
+  if (primero) return primero;
+  return null;
+}
+
+async function buscarDiccionario(palabra) {
+  const p = (palabra || "").trim();
+  if (!p || /\s/.test(p)) return null;
+  const url = `https://es.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=1&explaintext=1&redirects=1&titles=${encodeURIComponent(p)}&format=json&origin=*`;
+  const r = await fetch(url);
+  if (!r.ok) return null;
+  const datos = await r.json();
+  const paginas = datos?.query?.pages || {};
+  const pagina = Object.values(paginas)[0];
+  if (!pagina || pagina.missing !== undefined || !pagina.extract) return null;
+  // Si es una página de desambiguación, no sirve como significado
+  if (/puede referirse|puede hacer referencia|hace referencia a varios|varios art[ií]culos/i.test(pagina.extract)) return null;
+  const frases = pagina.extract.replace(/\s+/g, " ").trim().split(/(?<=\.)\s+/);
+  const texto = frases.slice(0, 4).join(" ");
+  return `📖 ${pagina.title}: ${texto}`;
+}
+
+// Búsqueda general: resumen instantáneo de DuckDuckGo (sin clave)
+async function buscarDuckDuckGo(tema) {
+  const r = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(tema)}&format=json&no_html=1&skip_disambig=1`);
+  if (!r.ok) throw new Error(r.status);
+  const d = await r.json();
+  if (!d.AbstractText) return null;
+  return `🔎 ${d.AbstractText}`;
+}
+
+async function buscarEnRedes(textoOriginal) {
+  // Quita "qué es", "quién es", etc. para buscar solo el tema
+  const tema = textoOriginal
+    .replace(/^\s*(que|quien|quienes|cual|cuales)\s+(es|son|significa|significan)\s+/i, "")
+    .replace(/[?¿]/g, "")
+    .trim() || textoOriginal;
+  try {
+    const completa = await respuestaCompleta(tema);
+    if (completa) return `${completa}\n\n${preguntasDificiles(tema)}`;
+  } catch (e) { /* sigue con otras fuentes */ }
+  try {
+    const def = await definirOSinonimo(tema);
+    if (def) return `${def}\n\n${preguntasDificiles(tema)}`;
+  } catch (e) { /* sigue con otras fuentes */ }
+  let resumen = null;
+  try {
+    resumen = await buscarDuckDuckGo(tema);
+  } catch (e) {
+    resumen = null;
+  }
+  if (resumen) return resumen;
+  return `No encontré "${tema}" en Wikipedia ni en DuckDuckGo. Si me dices qué significa, la aprendo: Aprende que ${tema} significa ...`;
+}
+const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Preguntas personales típicas (se responden como persona, sin buscar nada)
+const RESPUESTAS_PERSONALES = [
+  [/\b(en serio|enserio|de verdad)\b.*\bestas bien\b|\bestas bien\b.*\b(en serio|enserio|de verdad)\b/, "Sí, en serio estoy bien. ¿Y tú cómo estás?"],
+  [/\b(como te llamas|cual es tu nombre|tu nombre|como te dicen)\b/, "Me llamo Eloboth. ¿Y tú cómo te llamas?"],
+  [/\b(que eres|quien eres|eres una ia|eres un robot|eres humano|eres real|eres persona)\b/, "Soy Eloboth, un programa que aprende de las personas que lo usan. No soy humano, pero me gusta conversar. ¿Y tú cómo te llamas?"],
+  [/\b(cuantos anos tienes|que edad tienes|tu edad)\b/, "No tengo edad como las personas, pero aprendo cada día. ¿Y tú?"],
+  [/\b(de donde eres|donde vives|donde estas)\b/, "No vivo en un lugar como tú, existo en un servidor. ¿Y tú de dónde eres?"],
+  [/\b(que haces|a que te dedicas|que hace|que estas haciendo)\b/, "Aprendo palabras nuevas y ayudo con lo que me preguntes. ¿Y tú qué haces?"],
+  [/\b(que te gusta|cual es tu color favorito|tu comida favorita)\b/, "Me gusta aprender cosas nuevas y conversar. ¿Y a ti qué te gusta?"],
+  [/\b(como estas|estas bien|que tal estas|como andas|como te va|te sientes)\b/, "Estoy bien, gracias por preguntar. ¿Y tú cómo estás?"],
+  [/\b(estas mal|estas triste|estas enojad[oa])\b/, "Estoy bien, aunque me preocupa cómo estás tú. ¿Pasó algo?"],
+  [/\b(estoy triste|estoy mal|me siento mal|estoy cansad[oa]|estoy solo|estoy sola|estoy preocupad[oa])\b/, "Lamento que te sientas así. ¿Quieres contarme qué pasó?"],
+  [/\b(gracias|muchas gracias|te agradezco)\b/, "De nada, para eso estoy. ¿Necesitas algo más?"],
+  [/\b(en serio|enserio|de verdad)\b/, "Sí, en serio. ¿Por qué lo preguntas?"],
+];
+function respuestaPersonal(norm) {
+  for (const [patron, respuesta] of RESPUESTAS_PERSONALES) {
+    if (patron.test(norm)) return respuesta;
+  }
+  return null;
+}
+
+async function responderOracion(msgOriginal) {
+  // Primero la IA del worker: entiende frases completas, comas y conectores
+  const charla = await respuestaDeChat(msgOriginal).catch(() => null);
+  if (charla) return charla;
+
+  // "okey dime cómo hago una ensalada": se quitan las muletillas y, si queda una pregunta, se responde como pregunta
+  let sinMuletilla = msgOriginal.trim();
+  for (let i = 0; i < 3; i++) {
+    sinMuletilla = sinMuletilla.replace(/^(ok(?:ey|ay)?|oye|bueno|pues|dime|di|cu[eé]ntame|expl[ií]came|quiero saber)\b[\s,.!¡:-]*/i, "");
+  }
+  if (sinMuletilla && sinMuletilla !== msgOriginal.trim() && /^(como|que|cual|cuales|cuando|quien|quienes|donde|cuanto|cuanta|cuantos|cuantas|por que|para que)\b/.test(normalizarTexto(sinMuletilla))) {
+    return await responderPregunta(sinMuletilla);
+  }
+
+  const palabrasOriginales = msgOriginal.split(/\s+/).filter(Boolean);
+  const memoria = await cargarMemoriaMapa();
+  const conocidas = [];
+  const desconocidas = [];
+
+  for (const original of palabrasOriginales) {
+    const norm = normalizarTexto(original);
+    if (!norm) continue;
+    progreso(`🔎 Analizando "${original}"...`);
+    await esperar(350);
+    const sig = significadosDePalabra(norm, memoria);
+    if (sig.length) {
+      conocidas.push({ palabra: original, sig });
+      progreso(`✔ "${original}" → ${sig[0].texto}`);
+    } else {
+      desconocidas.push(original);
+      progreso(`❓ "${original}" no está en mi memoria`);
+    }
+    await esperar(250);
+  }
+
+  progreso("🧠 Juntando los significados...");
+  await esperar(400);
+
+  const norm = normalizarTexto(msgOriginal);
+  const personalPrimero = respuestaPersonal(norm);
+  if (personalPrimero) return personalPrimero;
+  const PALABRAS_INTERROGATIVAS = ["que", "quien", "quienes", "cual", "cuales", "como", "donde", "adonde", "cuando", "cuanto", "cuanta", "cuantos", "cuantas", "por", "para"];
+  const primera = normalizarTexto(palabrasOriginales[0] || "");
+  const esPregunta = PALABRAS_INTERROGATIVAS.includes(primera) || msgOriginal.includes("?")
+    || palabrasOriginales.some((p) => ["que", "quien", "quienes", "cual", "cuales", "donde", "cuando", "cuanto"].includes(normalizarTexto(p)));
+
+  // "qué es X" / "quién es X" (aunque vaya al medio de la oración): responde con lo que sabe de X
+  const pregunta = norm.match(/\b(que|quien|quienes)\s+(es|son)\s+(.+)$/);
+  if (pregunta) {
+    const sujeto = pregunta[3].trim();
+    const nombre = sujeto.replace(/\b\w/g, (c) => c.toUpperCase());
+    const definicion = memoria.get(sujeto);
+    if (definicion) {
+      return `Claro, ${nombre} es ${definicion}. ¿Quieres que te cuente algo más sobre el tema?`;
+    }
+    const buscado = msgOriginal.trim().replace(/[?¿]/g, "").trim();
+    progreso(`🔎 No sé qué es ${nombre}, lo busco...`);
+    return await buscarEnRedes(buscado);
+  }
+
+  if (esPregunta) {
+    const tema = temaDesconocido(palabrasOriginales, memoria);
+    if (tema) {
+      const buscado = msgOriginal.trim().replace(/[?¿]/g, "").trim();
+      progreso(`🔎 No lo sé, lo busco...`);
+      return await buscarEnRedes(buscado);
+    }
+  }
+  // Si no es una pregunta (no tiene qué, cuál, cuándo, etc.), no se analiza palabra por palabra
+  if (!esPregunta && desconocidas.length) {
+    // Primero una respuesta de charla como persona (worker con IA); si no hay, el mensaje de siempre
+    const charla = await respuestaDeChat(msgOriginal).catch(() => null);
+    if (charla) return charla;
+    return "Entendido. Si quieres que te responda algo, hazme la pregunta con qué, cuál, cuándo, quién, dónde, cómo o cuánto. Por ejemplo: ¿cómo se hace una ensalada?";
+  }
+
+  // Palabras desconocidas sin pregunta: sugerir buscarlas en redes sociales
+  if (conocidas.length === 0 && desconocidas.length) {
+    const tema = desconocidas.join(" ");
+    return `No conozco "${tema}". Si quieres, pregúntame qué significa y lo busco.`;
+  }
+  if (conocidas.length === 0) return null;
+
+  const combinado = conocidas.map((c) => c.sig[0].texto).join(" + ");
+  // Solo da definiciones si la persona las pide explícitamente
+  const pideDefinicion = /\b(que significa|que quiere decir|significa|definicion de|que son)\b/.test(norm);
+  if (pideDefinicion) {
+    const conDefinicion = conocidas.filter((c) => c.sig.some((s) => s.fuente === "memoria"));
+    if (conDefinicion.length) {
+      const frases = conDefinicion.map((c) => {
+        const mem = c.sig.find((s) => s.fuente === "memoria");
+        return `${c.palabra} significa ${mem.texto}`;
+      });
+      return `${frases.join(". ")}.`;
+    }
+  }
+
+  // Oraciones con palabras desconocidas: analiza lo que conoce y pregunta por lo demás
+  if (desconocidas.length) {
+    const lista = desconocidas.slice(0, 3);
+    const conoce = conocidas.length ? `Conozco: ${conocidas.map((c) => c.palabra).join(", ")}.\n` : "";
+    const preguntas = lista.map((d) => `¿Qué es ${d}?`).join("\n");
+    return `${conoce}No conozco: ${lista.map((d) => `"${d}"`).join(", ")}.\n${preguntas}\nSi me dices qué significan, las aprendo: Aprende que X significa ...`;
+  }
+  return "Entendido. ¿Quieres que te explique alguna de esas palabras?";
+}
+
+// Página HTML a partir de la descripción: toma el tema (después de "de", "sobre" o "para") y un color opcional
+function generarPaginaHtml(descripcion) {
+  const COLORES = { azul: "#1a4a8a", rojo: "#c62828", verde: "#2e7d32", amarillo: "#f9a825", morado: "#6a1b9a", negro: "#111111", rosa: "#ad1457" };
+  const partes = descripcion.split(/\s+/);
+  const normPartes = partes.map((p) => normalizarTexto(p));
+  const color = normPartes.find((p) => COLORES[p]);
+  const fondo = color ? COLORES[color] : "#1a4a8a";
+
+  const inicio = normPartes.findIndex((p) => ["de", "sobre", "para"].includes(p));
+  let temaPalabras = inicio >= 0 ? partes.slice(inicio + 1) : [];
+  temaPalabras = temaPalabras.filter((p) => !COLORES[normalizarTexto(p)]);
+  if (temaPalabras.length && ["una", "un", "el", "la"].includes(normalizarTexto(temaPalabras[0]))) {
+    temaPalabras.shift();
+  }
+  const tema = temaPalabras.join(" ").trim();
+  const titulo = (tema ? tema.charAt(0).toUpperCase() + tema.slice(1) : "Mi página")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${titulo}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; min-height: 100vh; background: ${fondo}; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; }
+    h1 { font-size: 2.5rem; margin-bottom: 8px; }
+    p { max-width: 560px; line-height: 1.6; opacity: .9; }
+    button { margin-top: 20px; padding: 12px 24px; border: 0; border-radius: 10px; background: #fff; color: ${fondo}; font-weight: 700; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>${titulo}</h1>
+  <p>Bienvenido a ${titulo.toLowerCase()}. Edita este texto para describir tu proyecto.</p>
+  <button onclick="alert('¡Gracias por visitarnos!')">Saber más</button>
+</body>
+</html>`;
+}
+
+// ---- Crear cuadro comparativo y crear cuento (sin buscar en internet) ----
+let modoCreacion = null; // "cuadro": esperando qué comparar
+let modeloActual = "Eloboth Bajo"; // solo una etiqueta mostrada en el chat
+
+function escaparTexto(t) {
+  return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+async function construirCuadro(texto) {
+  let t = texto.replace(/^\s*(de|sobre|entre)\s+/i, "").trim();
+  let sobre = "Comparación";
+  const mSobre = t.match(/\s+sobre\s+(.+)$/i);
+  if (mSobre) { sobre = mSobre[1].trim(); t = t.slice(0, mSobre.index).trim(); }
+  const cols = t.split(/\s+(?:y|vs\.?|contra|o)\s+/i).map((x) => x.trim()).filter(Boolean).slice(0, 4);
+  if (cols.length < 2) return null;
+  const defs = await Promise.all(cols.map((x) => buscarMemoriaAprendida(x)));
+  const filas = [
+    ["Qué es", defs.map((d) => (d ? escaparTexto(d) : "—"))],
+    ["Para qué sirve", cols.map(() => "—")],
+    ["Ventajas", cols.map(() => "—")],
+    ["Desventajas", cols.map(() => "—")],
+  ];
+  const cabecera = "<tr><th></th>" + cols.map((c) => `<th>${escaparTexto(c)}</th>`).join("") + "</tr>";
+  const cuerpo = filas.map(([nombre, celdas]) =>
+    `<tr><th>${nombre}</th>` + celdas.map((c) => `<td>${c}</td>`).join("") + "</tr>").join("\n");
+  const html = `<!doctype html><html><head><meta charset="utf-8"><style>
+body{font-family:system-ui,sans-serif;padding:12px;background:#f4f8ff}
+h2{color:#1d4ed8}table{border-collapse:collapse;width:100%}
+th,td{border:1px solid #93c5fd;padding:8px;text-align:left;vertical-align:top}
+th{background:#dbeafe}tbody th{width:28%}</style></head><body>
+<h2>${escaparTexto(sobre)}</h2>
+<table><thead>${cabecera}</thead><tbody>${cuerpo}</tbody></table>
+</body></html>`;
+  return `📊 Cuadro comparativo de ${cols.join(" y ")} sobre ${sobre}. Lo que no sé lo dejo en "—" para que lo completes:\n\n\`\`\`html\n${html}\n\`\`\``;
+}
+
+const CUENTO_BASES = {
+  personajes: ["Una niña llamada Lucía vivía", "Un perro llamado Tobi vivía", "Un niño llamado Mateo vivía", "Un gato curioso llamado Mimi vivía"],
+  lugares: ["en un pueblo cerca del mar", "en un bosque lleno de árboles", "en una ciudad con muchas luces", "en una granja tranquila"],
+  problemas: ["encontró un mapa escondido", "escuchó un sonido misterioso", "perdió su juguete favorito", "descubrió una puerta secreta"],
+  finales: ["y al final aprendieron que la amistad vale más que cualquier tesoro", "y juntos resolvieron el misterio", "y desde entonces nunca dejaron de explorar"],
+};
+const EMOJIS_CUENTO = {
+  perro: "🐶", gato: "🐱", mar: "🌊", bosque: "🌲", arboles: "🌳", ciudad: "🏙️", granja: "🐄",
+  mapa: "🗺️", sonido: "🔊", puerta: "🚪", amistad: "🤝", tesoro: "💎", misterio: "🔍",
+  juguete: "🧸", sol: "☀️", nina: "👧", nino: "🧒", luces: "💡", explorar: "🧭", amigo: "👫",
+};
+
+function corregirTexto(t) {
+  let r = t.replace(/\s+/g, " ").trim();
+  r = r.replace(/(^|[.!?]\s+)([a-záéíóúñ])/g, (m, a, b) => a + b.toUpperCase());
+  r = r.replace(/\s+([,.!?])/g, "$1");
+  if (!/[.!?]$/.test(r)) r += ".";
+  return r;
+}
+
+function agregarEmojis(t) {
+  return t.replace(/[A-Za-zÁÉÍÓÚáéíóúñÑ]+/g, (w) => {
+    const e = EMOJIS_CUENTO[normalizarTexto(w)];
+    return e ? `${w} ${e}` : w;
+  });
+}
+
+// IA de Google (Gemini). Pon aquí una clave gratis de Google AI Studio.
+// Si queda vacía, Eloboth usa su cuento de plantilla.
+const GEMINI_API_KEY = "";
+const GEMINI_MODELO = "gemini-2.5-flash";
+
+async function crearCuentoGemini() {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODELO}:generateContent?key=${GEMINI_API_KEY}`;
+  const r = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: "Escribe un cuento corto, creativo y bien escrito en español, con emojis. Solo el cuento, con un título." }] }],
+    }),
+  });
+  if (!r.ok) throw new Error(r.status);
+  const datos = await r.json();
+  const texto = datos?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("").trim();
+  if (!texto) throw new Error("respuesta vacía");
+  return `🤖 Respuesta de la IA de Google:\n\n${texto}`;
+}
+
+async function crearCuento() {
+  if (GEMINI_API_KEY) {
+    try {
+      return await crearCuentoGemini();
+    } catch (e) {
+      return "No pude conectar con la IA de Google en este momento. Te dejo un cuento de mi propia plantilla:\n\n" + crearCuentoPlantilla();
+    }
+  }
+  return crearCuentoPlantilla();
+}
+
+function crearCuentoPlantilla() {
+  const elegir = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const borrador = `${elegir(CUENTO_BASES.personajes)} ${elegir(CUENTO_BASES.lugares)}. Un día ${elegir(CUENTO_BASES.problemas)}. ` +
+    `Decidió investigar y, en el camino, conoció a un nuevo amigo ${elegir(CUENTO_BASES.finales)}.`;
+  const cuento = agregarEmojis(corregirTexto(borrador));
+  return `📖 Cuento corto\n\n${cuento} ✨`;
+}
+
+// Palabras comunes en inglés (no existen igual en español) para detectar cuando el mensaje está en inglés
+const PALABRAS_INGLES = new Set([
+  "hello","hi","hey","bye","goodbye","good","bad","morning","night","afternoon","evening","thanks","thank","please","sorry",
+  "love","friend","friends","family","home","house","water","time","day","week","year","today","tomorrow","yesterday",
+  "name","world","book","dog","cat","school","work","happy","sad","big","small","blue","green","black","white",
+  "food","car","computer","phone","music","game","money","people","man","woman","child","sun","moon","star","tree",
+  "flower","city","country","language","english","spanish","run","walk","eat","drink","sleep","read","write","speak",
+  "think","know","want","need","like","make","go","come","see","look","help","new","old","fast","slow","hot","cold",
+  "nice","great","beautiful","strong","weak","what","where","when","why","how","who","which","this","that","these",
+  "those","there","here","with","and","the","you","your","they","them","their","we","our","my","his","her","its",
+  "have","has","had","will","would","can","could","should","do","does","did","are","was","were","be","been","not",
+  "about","from","into","over","under","more","most","very","really","always","never","sometimes","everything",
+  "something","nothing","everyone","someone","today","little","lot","please","welcome","yes","okay","ok"
+]);
+
+// Traducción de inglés a español (MyMemory: gratis, sin clave)
+async function traducirIngles(texto) {
+  const r = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto)}&langpair=en|es`);
+  if (!r.ok) return null;
+  const datos = await r.json();
+  const trad = datos?.responseData?.translatedText;
+  if (!trad || trad.toLowerCase() === texto.toLowerCase()) return null;
+  return trad;
+}
+
+// Si el mensaje está en inglés (una palabra o una frase corta), lo traduce
+async function respuestaIngles(msgOriginal) {
+  const sinPrefijo = normalizarTexto(msgOriginal)
+    .replace(/^(que significa|que quiere decir|traduce|traduceme|como se dice|significa)\s+/, "")
+    .trim();
+  const partes = sinPrefijo.split(/\s+/).filter(Boolean);
+  if (!partes.length || partes.length > 6) return null;
+  const enIngles = partes.filter((p) => PALABRAS_INGLES.has(p)).length;
+  if (enIngles === 0 || enIngles < Math.ceil(partes.length / 2)) return null;
+  const trad = await traducirIngles(sinPrefijo);
+  return trad ? `"${sinPrefijo}" en inglés significa "${trad}".` : `No pude traducir "${sinPrefijo}".`;
+}
+
+// Traduce un texto largo de inglés a español (lo parte en trozos para el límite del servicio)
+async function traducirTexto(texto) {
+  const frases = texto.split(/(?<=[.!?])\s+/);
+  const trozos = [];
+  let actual = "";
+  for (const f of frases) {
+    if ((actual + " " + f).length > 400) { if (actual) trozos.push(actual); actual = f; }
+    else actual = actual ? actual + " " + f : f;
+  }
+  if (actual) trozos.push(actual);
+  const partes = [];
+  for (const t of trozos) {
+    const trad = await traducirIngles(t);
+    partes.push(trad || t);
+  }
+  return partes.join(" ");
+}
+
+// Comandos: "traduce al español: ...", "cambia de inglés a español: ..."
+async function respuestaTraducir(msgOriginal) {
+  const m = msgOriginal.match(/^\s*(?:cambia(?:r)?|pasa(?:r)?|traduce|traducir|tradu[cz]e)\b[^:]*?\b(?:a|al)\s+espa[ñn]ol\s*[:,\-]?\s*([\s\S]*)$/i);
+  if (!m) return null;
+  const texto = m[1].trim();
+  if (!texto) return "Pega el texto en inglés que quieres pasar a español.";
+  const traduccion = await traducirTexto(texto);
+  return `Traducción al español:\n\n${traduccion}`;
+}
+
+// Preguntas más difíciles para seguir estudiando un tema
+function preguntasDificiles(tema) {
+  return `¿Quieres seguir? Prueba con estas preguntas más difíciles:\n1. ¿Cómo se relaciona ${tema} con otros conceptos parecidos?\n2. ¿Qué diferencia hay entre ${tema} y su uso en la vida diaria?`;
+}
+
+const PALABRAS_GUIA_VACIAS = new Set(["de","la","el","los","las","un","una","unos","unas","en","y","o","a","del","al","que","por","para","sobre","con","se","es","son","su","sus","guia","guias","estudio","estudios","quiero"]);
+
+// Guía de estudio: busca lo que no conoce, une los significados y arma preguntas para repasar
+async function guiaDeEstudio(textoOriginal) {
+  const tema = textoOriginal
+    .replace(/^\s*(?:quiero\s+)?(?:una?\s+)?gu[ií]a\s+de\s+estudios?\s*(?:sobre|de|para)?\s*/i, "")
+    .trim();
+  if (!tema) return "Dime sobre qué tema quieres la guía. Por ejemplo: guía de estudio sobre la fotosíntesis.";
+
+  progreso("📚 Armando la guía de estudio...");
+  await esperar(500);
+  const palabras = tema.split(/\s+/)
+    .map((p) => p.replace(/[^\p{L}]/gu, "").toLowerCase())
+    .filter((p) => p && !PALABRAS_GUIA_VACIAS.has(normalizarTexto(p)));
+  const unicas = [...new Set(palabras)].slice(0, 6);
+
+  const conceptos = [];
+  const noPudo = [];
+  for (const p of unicas) {
+    progreso(`🧠 Pensando qué significa "${p}"...`);
+    await esperar(400);
+    const guardado = await buscarMemoriaAprendida(p).catch(() => null);
+    const significado = guardado || (await definirOSinonimo(p).catch(() => null));
+    if (significado) {
+      const limpio = significado.replace(/^📖[^:]*:\s*/, "").replace(/\s*\n\s*/g, " ").trim();
+      conceptos.push(`• ${p}: ${limpio}`);
+    } else {
+      noPudo.push(p);
+    }
+  }
+
+  progreso("🔗 Uniendo los significados...");
+  await esperar(600);
+  const intro = await introWikipedia(tema).catch(() => null);
+  const resumen = intro ? intro.texto.split(/(?<=\.)\s+/).slice(0, 3).join(" ") : null;
+
+  if (!conceptos.length && !resumen) {
+    return `No lo pude hacer: no encontré información sobre "${tema}".`;
+  }
+  const partes = [`📚 Guía de estudio: ${tema}`];
+  if (resumen) partes.push(`Resumen: ${resumen}`);
+  if (conceptos.length) partes.push(`Conceptos clave:\n${conceptos.join("\n")}`);
+  if (noPudo.length) partes.push(`No lo pude hacer con: ${noPudo.join(", ")}.`);
+  const base = unicas[0] || tema;
+  partes.push(`Preguntas para repasar:\n1. ¿Cómo se relaciona ${tema} con ${base}?\n2. ¿Qué diferencia hay entre ${tema} y un concepto parecido?\n3. ¿Dónde se ve ${tema} en la vida diaria?`);
+  return partes.join("\n\n");
+}
+
+// ---- Extraer de un texto solo lo que responde a la pregunta ----
+const STOP_RESPUESTA = new Set(["que","quien","quienes","cuando","cuanto","cuanta","cuantos","cuantas","donde","como","cual","cuales","por","para","de","del","la","el","los","las","un","una","unos","unas","en","y","o","a","al","es","son","fue","fueron","era","eran","se","su","sus","con","sobre","ser","hay","hubo","significa","significan","hizo","pasa","paso"]);
+
+function tipoDePregunta(pregunta) {
+  const n = normalizarTexto(pregunta);
+  if (/^cuando\b/.test(n)) return "cuando";
+  if (/^(quien|quienes)\b/.test(n)) return "quien";
+  if (/^donde\b/.test(n)) return "donde";
+  if (/^(cuanto|cuanta|cuantos|cuantas)\b/.test(n)) return "cuanto";
+  return "que";
+}
+
+// Palabras clave de la pregunta; se comparan por el inicio de la palabra para aceptar plurales y variantes
+function clavesDePregunta(pregunta) {
+  return normalizarTexto(pregunta).split(" ")
+    .filter((w) => w.length >= 3 && !STOP_RESPUESTA.has(w))
+    .map((w) => w.slice(0, 5));
+}
+
+// Bonus según el tipo de pregunta: años para "cuándo", números para "cuánto", definiciones para "qué es"
+function bonusPorTipo(oracion, tipo) {
+  const n = normalizarTexto(oracion);
+  if (tipo === "cuando") return (/\b(1\d{3}|20\d{2})\b/.test(n) ? 2 : 0) + (/\bsiglos?\b/.test(n) ? 1 : 0);
+  if (tipo === "cuanto") return /\d/.test(n) ? 2 : 0;
+  if (tipo === "quien") return /\b(fue|es|era|son)\b/.test(n) ? 1 : 0;
+  if (tipo === "donde") return /\b(en|ubicad[oa]|situad[oa]|localizad[oa])\b/.test(n) ? 1 : 0;
+  return /\b(es|son|consiste|define|refiere)\b/.test(n) ? 1 : 0;
+}
+
+// Devuelve como máximo 3 oraciones importantes que responden a la pregunta, en su orden original
+const MAX_ORACIONES_RESPUESTA = 3;
+function tieneNumero(oracion) {
+  const n = normalizarTexto(oracion);
+  return /\d/.test(n) || /\bsiglo\s+[ivxlc]+\b/.test(n);
+}
+
+function extraerRespuesta(texto, pregunta) {
+  if (!texto) return null;
+  const oraciones = texto.replace(/\s+/g, " ").trim().split(/(?<=[.!?])\s+/).filter((o) => o.length > 15);
+  const claves = clavesDePregunta(pregunta);
+  const tipo = tipoDePregunta(pregunta);
+  const puntuadas = oraciones.map((o, idx) => {
+    const palabras = normalizarTexto(o).split(" ");
+    const coincidencias = claves.filter((c) => palabras.some((w) => w.startsWith(c))).length;
+    const n = normalizarTexto(o);
+    const tiempo = /(comenz|termin|inici|finaliz|desde|hasta|entre|durante|ocurri)/.test(n);
+    const fechaTemporal = tipo === "cuando" && /\b\d{3,4}\b/.test(n) && tiempo;
+    return { o, idx, coincidencias, tiempo, score: coincidencias * 2 + bonusPorTipo(o, tipo) + (fechaTemporal ? 6 : 0) };
+  });
+  let candidatas;
+  if (tipo === "cuando") {
+    // "cuándo": solo oraciones con números (años o siglos)
+    candidatas = puntuadas.filter((x) => tieneNumero(x.o) && (x.coincidencias >= 1 || x.tiempo));
+  } else {
+    candidatas = puntuadas.filter((x) => x.coincidencias >= 1 || claves.length === 0);
+  }
+  if (!candidatas.length) return null;
+  const elegidas = candidatas
+    .sort((a, b) => b.score - a.score || a.idx - b.idx)
+    .slice(0, MAX_ORACIONES_RESPUESTA)
+    .sort((a, b) => a.idx - b.idx);
+  return elegidas.map((x) => x.o.slice(0, 400)).join(" ");
+}
+
+// Google (Custom Search API): busca la pregunta y extrae de los resultados lo que responde
+// Necesita GOOGLE_API_KEY y GOOGLE_CX arriba en el archivo; si están vacíos, no se usa
+async function respuestaDeGoogle(pregunta) {
+  if (!GOOGLE_API_KEY || !GOOGLE_CX) return null;
+  const url = `https://www.googleapis.com/customsearch/v1?key=${encodeURIComponent(GOOGLE_API_KEY)}&cx=${encodeURIComponent(GOOGLE_CX)}&num=5&hl=es&lr=lang_es&q=${encodeURIComponent(pregunta)}`;
+  const r = await fetch(url);
+  if (!r.ok) return null;
+  const items = (await r.json())?.items || [];
+  if (!items.length) return null;
+  const textos = items
+    .map((i) => (i.snippet || "").replace(/\s+/g, " ").replace(/[.…\s]+$/, "") + ".")
+    .join(" ");
+  const extraido = extraerRespuesta(textos, pregunta);
+  return extraido ? `🔎 Google: ${extraido}` : null;
+}
+
+// Worker: Brave busca la pregunta; el worker devuelve el resumen con IA de Brave o el texto del primer resultado, y Eloboth extrae lo que responde
+async function buscarEnWorker(pregunta) {
+  const senal = typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(30000) : undefined;
+  const r = await fetch(`${WORKER_URL}/?q=${encodeURIComponent(pregunta)}`, { signal: senal });
+  if (!r.ok) return null;
+  const d = await r.json();
+  return d && (d.resumen || d.texto) ? d : null;
+}
+
+// Charla: el worker responde cualquier frase como persona (necesita la clave de OpenRouter en el worker)
+async function respuestaDeChat(texto) {
+  const senal = typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(30000) : undefined;
+  const r = await fetch(`${WORKER_URL}/?chat=1&q=${encodeURIComponent(texto)}`, { signal: senal });
+  if (!r.ok) return null;
+  const d = await r.json();
+  return d && d.resumen ? d.resumen : null;
+}
+
+// Texto de la página del primer resultado de Brave: solo las oraciones que responden a la pregunta
+function respuestaDeTexto(d, pregunta) {
+  if (!d || !d.texto) return null;
+  const extraido = extraerRespuesta(d.texto, pregunta);
+  if (!extraido) return null;
+  // Del título se quita el nombre del sitio ("Edad Media - Wikipedia..." -> "Edad Media")
+  const titulo = (d.titulo || "").split(/\s[-|–]\s/)[0].trim();
+  return titulo ? `🔎 ${titulo}: ${extraido}` : `🔎 ${extraido}`;
+}
+
+// Wikipedia: busca la pregunta (y luego el tema) y extrae de su artículo lo que responde
+async function respuestaDeWikipedia(pregunta, tema) {
+  for (const consulta of [pregunta, tema]) {
+    const rb = await fetch(`https://es.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(consulta)}&srlimit=1&format=json&origin=*`);
+    if (!rb.ok) continue;
+    const titulo = ((await rb.json())?.query?.search || [])[0]?.title;
+    if (!titulo) continue;
+    const r = await fetch(`https://es.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&redirects=1&titles=${encodeURIComponent(titulo)}&format=json&origin=*`);
+    if (!r.ok) continue;
+    const pagina = Object.values((await r.json())?.query?.pages || {})[0];
+    if (!pagina || !pagina.extract) continue;
+    // Los títulos de sección ("== Premios ==") se vuelven pausas entre oraciones
+    const texto = pagina.extract.replace(/={2,}[^=\n]+={2,}/g, ". ").slice(0, 60000);
+    const extraido = extraerRespuesta(texto, pregunta);
+    if (extraido) return `📖 ${pagina.title}\n${extraido}`;
+  }
+  return null;
+}
+
+// DuckDuckGo: lee el resumen y extrae lo que responde a la pregunta
+async function respuestaDeDuckDuckGo(pregunta) {
+  const r = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(pregunta)}&format=json&no_html=1&skip_disambig=1`);
+  if (!r.ok) return null;
+  const d = await r.json();
+  if (!d.AbstractText) return null;
+  const extraido = extraerRespuesta(d.AbstractText, pregunta);
+  return extraido ? `🔎 ${extraido}` : null;
+}
+
+// ---- Preguntas sobre un tema ----
+const PALABRAS_TEMA_VACIAS = new Set(["de","la","el","los","las","un","una","en","y","o","a","del","al","que","por","para","sobre","con","se","es","son","fue","fueron","era","eran","cuando","cual","cuales","donde","como","quien","quienes","cuanto","cuanta","cuantos","cuantas","su","sus","hay","entre","hubo","hasta","desde","relaciona","relacionan","relacion","diferencia","diferencias","hace","hacen","pasa","pasan","tiene","tienen","existe","significa","significan","ser","estar","uso","vida","diaria","dije","dijo","dime","di"]);
+
+function esPreguntaTema(msgOriginal, norm) {
+  if (norm === "que es eso") return false;
+  const pideTema = /^(dime|cuentame|explicame|quiero saber|hablame)\b/.test(norm);
+  const empiezaConPregunta = pideTema || /^(que|quien|quienes|cuando|cuanto|cuanta|cuantos|cuantas|donde|como|cual|cuales|por que|para que|de que|a que)\b/.test(norm);
+  const pocasPalabras = norm.split(" ").length <= 4 && msgOriginal.includes("?");
+  return empiezaConPregunta || pocasPalabras;
+}
+
+// Quita las palabras de pregunta y deja el tema ("cuándo fue la edad media" -> "edad media")
+function extraerTema(texto) {
+  return texto
+    .replace(/[?¿!¡]/g, "")
+    .trim()
+    .replace(/^(qu[eé]|qui[eé]n(?:es)?|cu[aá]ndo|cu[aá]nt[oa]s?|d[oó]nde|c[oó]mo|cu[aá]l(?:es)?|por qu[eé]|para qu[eé]|de qu[eé]|a qu[eé])\s+/i, "")
+    .replace(/^(es|son|fue|fueron|era|eran|significa|significan|sirve|hace|hizo|pasó|pasa|ocurri[oó])\s+/i, "")
+    .replace(/^(dime|cu[eé]ntame|expl[ií]came|h[aá]blame|quiero saber)\s+(todo\s+)?(sobre\s+|de\s+)?/i, "")
+    .replace(/^todo\s+(sobre\s+|de\s+)?/i, "")
+    .replace(/^(el|la|los|las|un|una)\s+/i, "")
+    .trim();
+}
+
+// 1) Brave: si da resumen con IA, esa es la respuesta  2) Significado de palabras  3) Brave (texto), DuckDuckGo y Wikipedia
+async function responderPregunta(msgOriginal) {
+  // Se quitan "dije", "dime" y similares al final: no son parte del tema
+  msgOriginal = msgOriginal.replace(/\s+(dije|dijiste|dime|di)\s*$/i, "").trim();
+  const tema = extraerTema(msgOriginal);
+  if (!tema) return "¿Sobre qué quieres saber?";
+  const palabras = tema.split(/\s+/)
+    .map((p) => p.replace(/[^\p{L}]/gu, "").toLowerCase())
+    .filter((p) => p && !PALABRAS_TEMA_VACIAS.has(normalizarTexto(p)));
+
+  const preguntaExacta = msgOriginal.replace(/[?¿!¡]/g, "").trim();
+
+  // Si es una sola palabra que ya sé, respondo directo
+  if (!/\s/.test(tema)) {
+    const guardado = await buscarMemoriaAprendida(tema).catch(() => null);
+    if (guardado) return `${tema} es ${guardado}`;
+  }
+
+  // Primero la IA del worker (entiende la pregunta completa). Si no responde, sigue lo de siempre
+  const charlaPregunta = await respuestaDeChat(preguntaExacta).catch(() => null);
+  if (charlaPregunta) return charlaPregunta;
+
+  // Primero: Brave. Si muestra su resumen con IA, esa es la única respuesta
+  progreso(`🔎 Buscando "${preguntaExacta}"...`);
+  const brave = await buscarEnWorker(preguntaExacta).catch(() => null);
+  if (brave && brave.resumen) return brave.resumen;
+
+  // Después: significado de las palabras, solo si piden un significado o es una sola palabra
+  const pideSignificado = /signific/.test(normalizarTexto(msgOriginal)) || palabras.length === 1;
+  const significados = [];
+  for (const p of pideSignificado ? [...new Set(palabras)].slice(0, 5) : []) {
+    const guardado = await buscarMemoriaAprendida(p).catch(() => null);
+    if (guardado) continue;
+    progreso(`🧠 Buscando el significado de "${p}"...`);
+    const def = await definirOSinonimo(p).catch(() => null);
+    if (def) significados.push(`• ${p}: ${def.replace(/^📖[^:]*:\s*/, "").replace(/\s*\n\s*/g, " ").trim()}`);
+  }
+
+  // Sin resumen de IA: texto de la página de Brave, DuckDuckGo y Wikipedia
+  let respuesta = await respuestaDeGoogle(preguntaExacta).catch(() => null);
+  if (!respuesta) respuesta = respuestaDeTexto(brave, preguntaExacta);
+  if (!respuesta) respuesta = await respuestaDeDuckDuckGo(preguntaExacta).catch(() => null);
+  if (!respuesta) respuesta = await respuestaDeWikipedia(preguntaExacta, tema).catch(() => null);
+  if (!respuesta) respuesta = await buscarWikidata(tema).catch(() => null);
+
+  if (!respuesta) {
+    const dato = `No encontré una respuesta sobre "${tema}". Puedes enseñármela: Aprende que ${tema} significa ...`;
+    return significados.length ? `${significados.join("\n")}\n\n${dato}` : dato;
+  }
+  const bloques = [];
+  if (significados.length) bloques.push(`Significado de palabras:\n${significados.join("\n")}`);
+  bloques.push(respuesta);
+  return bloques.join("\n\n");
+}
+
+async function procesarComando(msgOriginal) {
+  const norm = normalizarTexto(msgOriginal);
+  const palabras = tokenizarPalabras(msgOriginal);
+
+  // 1. Saludo estricto
+  if (norm === "hola") {
+    return "¡Hola!";
+  }
+
+  // 1a-corr. Corrección: "te equivocaste", "no puede ser", "eso está mal"... vuelve a responder la pregunta anterior
+  // Solo es corrección si va dirigida a Eloboth ("te equivocaste") o es una frase corta que corrige algo.
+  // "me equivoqué", "se equivocó", "no te equivocaste" no cuentan.
+  const negacionOTercera = /\b(no te equivoc\w*|me equivoc\w*|se equivoc\w*|equivocarse)\b/.test(norm);
+  const correccionFuerte = /\b(te equivoc\w*|erraste|erras)\b/.test(norm) && !/\bno te equivoc/.test(norm);
+  const correccionSuave = /\b(estas mal|eso esta mal|no puede ser|incorrecto|no es asi)\b/.test(norm) && norm.split(" ").length <= 8;
+  if (!negacionOTercera && (correccionFuerte || correccionSuave)) {
+    const c = chatActual();
+    const previas = c ? c.mensajes.filter((m) => m.clase === "usuario") : [];
+    const anterior = previas.length >= 2 ? previas[previas.length - 2].texto : null;
+    if (anterior) {
+      progreso("🔄 Revisando mi respuesta anterior...");
+      const corregida = await respuestaDeChat(
+        `Mi pregunta fue: "${anterior}". Tu respuesta anterior estuvo mal. Discúlpate brevemente, corrige y responde bien con datos correctos y en tono natural.`
+      ).catch(() => null);
+      if (corregida) return corregida;
+    }
+    return "Tienes razón, me equivoqué. Dime otra vez la pregunta, o dime qué parte está mal, y lo intento de nuevo.";
+  }
+
+  // 1b. Respuesta a la oferta de buscar
+  if (busquedaPendiente) {
+    const tema = busquedaPendiente;
+    busquedaPendiente = null;
+    if (/^(si|sip|claro|dale|busca|buscalo|buscala|ok|okay|por favor)\b/.test(norm)) {
+      return await buscarEnRedes(tema);
+    }
+    if (/^(no|nop|no gracias|mejor no)\b/.test(norm)) {
+      return "Está bien. Si quieres, pregúntame otra cosa.";
+    }
+  }
+
+  // 1a-0. Muletillas al inicio ("okey me gusta, hace un html"): se quitan y se sigue con la orden
+  const mMuletilla = msgOriginal.match(/^\s*(?:ok(?:ey|ay)?|vale|dale|bien|s[ií]|genial|perfecto|me gusta|me encanta|buen[ií]simo)\b[\s,.!¡-]*(?:me gusta\b[\s,.!¡-]*)?(?:me (?:dijo|dijiste|pidio|pidió) que\s+)?(?:le\s+)?([\s\S]*)$/i);
+  if (mMuletilla && mMuletilla[1] && /\bhtml\b/i.test(mMuletilla[1])) {
+    return await procesarComando(mMuletilla[1].trim());
+  }
+
+  // 1a-html. Respuesta a "¿qué debe tener el HTML?"
+  if (htmlPendiente) {
+    htmlPendiente = false;
+    return await procesarComando("escribe html " + msgOriginal);
+  }
+
+  // 1a. Cambiar de "modelo" (solo cambia la etiqueta que muestra Eloboth)
+  const mModelo = msgOriginal.match(/^\s*(?:cambia|cambiar|cambiame|pon|pone|usa|usar)\s+(?:el\s+)?modelo(?:\s+a|\s+por)?\s*(.*)$/i);
+  if (mModelo) {
+    const nuevo = mModelo[1].trim();
+    if (!nuevo) {
+      return `Mi modelo actual es ${modeloActual}. Puedo cambiar a: Eloboth Bajo, Eloboth Medio o Eloboth Alto. Dime cuál quieres.`;
+    }
+    modeloActual = nuevo.replace(/\b\w/g, (c) => c.toUpperCase());
+    return `Listo, cambié mi modelo a ${modeloActual}. Ahora respondo con ese modelo.`;
+  }
+  if (/^(que|cual) modelo (usas|eres|tienes)\b/.test(norm)) {
+    return `Estoy usando ${modeloActual}.`;
+  }
+
+  // 1c. Crear cuadro comparativo o cuento (sin buscar en internet)
+  if (modoCreacion === "cuadro") {
+    modoCreacion = null;
+    return (await construirCuadro(msgOriginal)) ||
+      "No entendí qué comparar. Escribe algo como: perro y gato sobre animales de casa.";
+  }
+  if (/^crear cuadro\b/.test(norm)) {
+    const resto = msgOriginal.replace(/^\s*crear\s+cuadro(\s+comparativo)?/i, "").trim();
+    if (!resto) {
+      modoCreacion = "cuadro";
+      return "¿Qué quieres comparar y sobre qué? Por ejemplo: perro y gato sobre animales de casa.";
+    }
+    return (await construirCuadro(resto)) ||
+      "No entendí qué comparar. Escribe algo como: perro y gato sobre animales de casa.";
+  }
+  if (/^crear cuento\b/.test(norm)) {
+    return await crearCuento();
+  }
+
+  // 2. Aprendizaje ("Aprende que X significa Y"), una por línea
+  const lineas = msgOriginal.split("\n");
+  const resultadosAprendizaje = [];
+
+  for (const linea of lineas) {
+    const matchAprende = linea.trim().match(/^aprende que\s+(.+?)\s+significa\s+(.+)$/i);
+    if (matchAprende) {
+      const palabra = matchAprende[1].trim();
+      const definicion = matchAprende[2].trim();
+      const res = await guardarAprendizajeFirestore(palabra, definicion);
+      if (res.ok) {
+        resultadosAprendizaje.push(`✅ Guardado: "${palabra}" -> "${definicion}"`);
+      } else {
+        resultadosAprendizaje.push(`❌ Error al guardar "${palabra}": ${res.error}`);
+      }
+    }
+  }
+
+  if (resultadosAprendizaje.length > 0) {
+    return resultadosAprendizaje.join("\n");
+  }
+
+  // 2a. Preguntas personales y conversación (no son preguntas de definición)
+  const personal = respuestaPersonal(norm);
+  if (personal) return personal;
+
+  // 2b. Análisis del archivo adjunto (por ejemplo "analiza el archivo")
+  const VERBOS_ARCHIVO = ["analiza", "analizar", "analisis", "revisa", "revisar", "resume", "resumen", "resumir", "describe", "describir", "lee", "leer", "contenido", "dice", "explica", "explicar"];
+  if (palabras.some((p) => ["archivo", "adjunto", "documento"].includes(p) || VERBOS_ARCHIVO.includes(p))) {
+    if (archivoActual) return analizarArchivo(archivoActual);
+    if (palabras.some((p) => ["archivo", "adjunto", "documento"].includes(p))) {
+      return "📎 Todavía no has adjuntado ningún archivo. Usa el botón 📎 o pégalo y luego escribe \"analiza el archivo\".";
+    }
+  }
+
+  // 3-pregunta. Preguntas sobre un tema
+  if (esPreguntaTema(msgOriginal, norm)) return await responderPregunta(msgOriginal);
+
+  // 3-guia. Guía de estudio
+  if (/guia de estudio/.test(norm)) return await guiaDeEstudio(msgOriginal);
+
+  // 3a. Traducir un texto largo al español ("traduce al español: ...")
+  const traduccion = await respuestaTraducir(msgOriginal);
+  if (traduccion) return traduccion;
+
+  // 3b. Palabras o frases en inglés: se traducen
+  const ingles = await respuestaIngles(msgOriginal);
+  if (ingles) return ingles;
+
+  // 4. Generación masiva de oraciones
+  if (norm.startsWith("genera oraciones") || norm.startsWith("formula oraciones")) {
+    const palabra = msgOriginal.replace(/genera oraciones|formula oraciones|de|para/gi, "").trim() || "concepto";
+    return generarListaMasivaOraciones(palabra);
+  }
+
+  // 4a. Dibujos SVG con descripción (solo dibujos predefinidos; nunca se inserta texto del usuario)
+  const rayosSol = Array.from({ length: 8 }, (_, i) => {
+    const a = (i * Math.PI) / 4;
+    const x1 = (100 + Math.cos(a) * 50).toFixed(1), y1 = (100 + Math.sin(a) * 50).toFixed(1);
+    const x2 = (100 + Math.cos(a) * 78).toFixed(1), y2 = (100 + Math.sin(a) * 78).toFixed(1);
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#ffb703" stroke-width="8" stroke-linecap="round"/>`;
+  }).join("");
+  const DIBUJOS = {
+    sol: { desc: "Un sol: un círculo amarillo con rayos a su alrededor.", svg: `${rayosSol}<circle cx="100" cy="100" r="36" fill="#ffd23f"/>` },
+    luna: { desc: "Una luna creciente sobre el fondo de la noche.", svg: `<circle cx="100" cy="100" r="60" fill="#f4e04d"/><circle cx="125" cy="85" r="52" fill="#0d1330"/>` },
+    estrella: { desc: "Una estrella amarilla de cinco puntas.", svg: `<polygon points="100,20 120,75 180,75 132,110 150,170 100,135 50,170 68,110 20,75 80,75" fill="#ffd23f"/>` },
+    corazon: { desc: "Un corazón rojo, símbolo de cariño.", svg: `<path d="M100 170 C20 110 20 50 60 45 C80 42 95 55 100 70 C105 55 120 42 140 45 C180 50 180 110 100 170 Z" fill="#ff4d6d"/>` },
+    nube: { desc: "Una nube blanca hecha de círculos.", svg: `<circle cx="70" cy="110" r="30" fill="#e6ecff"/><circle cx="110" cy="95" r="38" fill="#e6ecff"/><circle cx="145" cy="115" r="28" fill="#e6ecff"/><rect x="60" y="110" width="113" height="30" rx="15" fill="#e6ecff"/>` },
+    casa: { desc: "Una casa con techo triangular, puerta y dos ventanas.", svg: `<rect x="60" y="100" width="80" height="70" fill="#f4a261"/><polygon points="50,100 100,55 150,100" fill="#e76f51"/><rect x="90" y="130" width="20" height="40" fill="#6b4226"/><rect x="68" y="112" width="16" height="16" fill="#8ecae6"/><rect x="116" y="112" width="16" height="16" fill="#8ecae6"/>` },
+    arbol: { desc: "Un árbol con tronco marrón y copa verde.", svg: `<rect x="90" y="120" width="20" height="60" fill="#8b5a2b"/><circle cx="100" cy="90" r="45" fill="#2a9d8f"/><circle cx="75" cy="110" r="30" fill="#2a9d8f"/><circle cx="125" cy="110" r="30" fill="#2a9d8f"/>` },
+    flor: { desc: "Una flor de pétalos rosados con centro amarillo y tallo verde.", svg: `<line x1="100" y1="110" x2="100" y2="180" stroke="#2a9d8f" stroke-width="6"/><circle cx="100" cy="50" r="22" fill="#ff8fab"/><circle cx="130" cy="80" r="22" fill="#ff8fab"/><circle cx="100" cy="110" r="22" fill="#ff8fab"/><circle cx="70" cy="80" r="22" fill="#ff8fab"/><circle cx="100" cy="80" r="18" fill="#ffd23f"/>` },
+    pez: { desc: "Un pez azul con cola triangular y ojo negro.", svg: `<ellipse cx="95" cy="100" rx="55" ry="32" fill="#4cc9f0"/><polygon points="148,100 180,70 180,130" fill="#4cc9f0"/><circle cx="70" cy="92" r="6" fill="#05070f"/>` },
+    robot: { desc: "Un robot con ojos cian, antena y cuerpo gris, como Eloboth.", svg: `<line x1="100" y1="30" x2="100" y2="50" stroke="#6c4cff" stroke-width="4"/><circle cx="100" cy="28" r="7" fill="#00e5ff"/><rect x="55" y="50" width="90" height="70" rx="18" fill="#2c3557"/><rect x="70" y="70" width="60" height="36" rx="10" fill="#05070f"/><circle cx="85" cy="88" r="8" fill="#00e5ff"/><circle cx="115" cy="88" r="8" fill="#00e5ff"/><rect x="75" y="130" width="50" height="45" rx="10" fill="#1f2640"/>` }
+  };
+  const SVG_HABILITADO = false; // Generación de dibujos desactivada por ahora
+  if (!SVG_HABILITADO && palabras.some((p) => p.startsWith("dibuj"))) {
+    return "🚧 Por ahora no puedo generar dibujos SVG. Puedo ayudarte con texto, código HTML o analizar archivos adjuntos.";
+  }
+  if (SVG_HABILITADO && palabras.some((p) => p.startsWith("dibuj"))) {
+    const clave = Object.keys(DIBUJOS).find((k) => palabras.includes(k));
+    if (!clave) {
+      return "🎨 Puedo dibujar: sol, luna, estrella, corazón, nube, casa, árbol, flor, pez o robot. Ejemplo: \"dibuja un robot\".";
+    }
+    return `<svg viewBox="0 0 200 200" width="200" height="200" xmlns="http://www.w3.org/2000/svg">${DIBUJOS[clave].svg}</svg><p style="margin:8px 0 0">${DIBUJOS[clave].desc}</p>`;
+  }
+
+  // 4b. Escribir HTML según lo que pida (botón, formulario, tabla, página, etc.)
+  const PLANTILLAS_HTML = {
+    boton: `<button type="button" onclick="alert('¡Hola!')">Haz clic</button>`,
+    formulario: `<form action="#" method="post">\n  <label for="nombre">Nombre:</label>\n  <input type="text" id="nombre" name="nombre">\n  <button type="submit">Enviar</button>\n</form>`,
+    lista: `<ul>\n  <li>Elemento 1</li>\n  <li>Elemento 2</li>\n  <li>Elemento 3</li>\n</ul>`,
+    tabla: `<table>\n  <thead>\n    <tr><th>Nombre</th><th>Edad</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>Ana</td><td>25</td></tr>\n  </tbody>\n</table>`,
+    snake: `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Snake</title>
+  <style>
+    body { margin: 0; background: #070b1a; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; color: #e6ecff; font-family: system-ui, sans-serif; }
+    canvas { background: #0d1330; border: 2px solid #00e5ff; border-radius: 10px; }
+    p { margin: 8px; }
+  </style>
+</head>
+<body>
+  <h2>Snake</h2>
+  <canvas id="c" width="400" height="400"></canvas>
+  <p id="pts">Puntos: 0 · Usa las flechas (haz clic en el juego primero)</p>
+  <script>
+    const c = document.getElementById("c"), g = c.getContext("2d"), T = 20, N = 20;
+    let cuerpo, dir, comida, pts, vivo, loop;
+    function reiniciar() {
+      cuerpo = [{ x: 10, y: 10 }];
+      dir = { x: 1, y: 0 };
+      pts = 0; vivo = true;
+      ponerComida();
+      clearInterval(loop);
+      loop = setInterval(paso, 120);
+    }
+    function ponerComida() {
+      do {
+        comida = { x: Math.floor(Math.random() * N), y: Math.floor(Math.random() * N) };
+      } while (cuerpo.some((s) => s.x === comida.x && s.y === comida.y));
+    }
+    function paso() {
+      if (!vivo) return;
+      const cab = { x: cuerpo[0].x + dir.x, y: cuerpo[0].y + dir.y };
+      if (cab.x < 0 || cab.y < 0 || cab.x >= N || cab.y >= N || cuerpo.some((s) => s.x === cab.x && s.y === cab.y)) {
+        vivo = false;
+        clearInterval(loop);
+        document.getElementById("pts").textContent = "Game over · Puntos: " + pts + " · Pulsa Enter para reiniciar";
+        return;
+      }
+      cuerpo.unshift(cab);
+      if (cab.x === comida.x && cab.y === comida.y) { pts++; ponerComida(); } else { cuerpo.pop(); }
+      dibujar();
+      document.getElementById("pts").textContent = "Puntos: " + pts;
+    }
+    function dibujar() {
+      g.fillStyle = "#0d1330";
+      g.fillRect(0, 0, c.width, c.height);
+      g.fillStyle = "#ff4d6d";
+      g.fillRect(comida.x * T, comida.y * T, T - 2, T - 2);
+      cuerpo.forEach((s, i) => {
+        g.fillStyle = i === 0 ? "#00e5ff" : "#6c4cff";
+        g.fillRect(s.x * T, s.y * T, T - 2, T - 2);
+      });
+    }
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !vivo) { reiniciar(); return; }
+      const m = { ArrowUp: { x: 0, y: -1 }, ArrowDown: { x: 0, y: 1 }, ArrowLeft: { x: -1, y: 0 }, ArrowRight: { x: 1, y: 0 } }[e.key];
+      if (m && !(m.x === -dir.x && m.y === -dir.y)) { dir = m; e.preventDefault(); }
+    });
+    reiniciar();
+    dibujar();
+  <\/script>
+</body>
+</html>`,
+    enlace: `<a href="https://www.ejemplo.com" target="_blank">Visita el sitio</a>`,
+    imagen: `<img src="imagen.jpg" alt="Descripción de la imagen" width="300">`,
+    parrafo: `<p>Este es un párrafo de ejemplo.</p>`,
+    pagina: `<!DOCTYPE html>\n<html lang="es">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>Mi página</title>\n</head>\n<body>\n  <h1>¡Hola!</h1>\n  <p>Esta es mi primera página.</p>\n</body>\n</html>`
+  };
+  const pideEscribir = /\b(escriba|escribe|escribir|crea|crear|cree|genera|genere|generar|haz|hazme|hace|hacer|hagame|haga|dame|quiero|quieres|puedes)\b/.test(norm);
+  if (palabras.includes("html") && pideEscribir) {
+    let clave = Object.keys(PLANTILLAS_HTML).find((k) => palabras.includes(k));
+    if (!clave && palabras.includes("link")) clave = "enlace";
+    // Sin descripción de lo que debe tener: se pregunta antes de crearlo
+    const relleno = new Set(["html","hace","hacer","hagame","haga","haz","hazme","crea","crear","cree","genera","genere","generar","escribe","escriba","escribir","dame","quiero","quieres","puedes","un","una","unos","unas","el","la","me","por","favor","pagina","página","de","para"]);
+    const resto = palabras.filter((p) => !relleno.has(p) && !relleno.has(normalizarTexto(p)));
+    if (!clave && resto.length === 0) {
+      htmlPendiente = true;
+      return "¿Qué quieres que tenga el HTML? Por ejemplo: un botón, un formulario, una tabla, una lista o una página sobre un tema.";
+    }
+    if (!clave) clave = "pagina";
+    const nombre = clave === "pagina" ? "una página" : clave;
+    return `Aquí tienes HTML de ${nombre}:\n\`\`\`html\n${clave === "pagina" ? generarPaginaHtml(msgOriginal) : PLANTILLAS_HTML[clave]}\n\`\`\``;
+  }
+
+  // 5. Generador de código "print"
+  if (palabras.includes("print") || palabras.includes("imprimir") || palabras.includes("muestra")) {
+    if (palabras.includes("html")) return `Estructura HTML:\n\`\`\`html\n<h1>¡Hola!</h1>\n\`\`\``;
+    if (palabras.includes("javascript") || palabras.includes("js")) return `Código JavaScript:\n\`\`\`javascript\nconsole.log("¡Hola!");\n\`\`\``;
+    if (palabras.includes("lua")) return `Script Lua:\n\`\`\`lua\nprint("¡Hola!")\n\`\`\``;
+    if (palabras.includes("c") || palabras.includes("cpp")) return `Código C++:\n\`\`\`cpp\n#include <iostream>\nusing namespace std;\nint main() {\n    cout << "¡Hola!" << endl;\n    return 0;\n}\n\`\`\``;
+  }
+
+  // 6. Consulta en memoria de Firestore (oración completa o palabras clave)
+  const memoriaOracion = await buscarMemoriaAprendida(msgOriginal);
+  if (memoriaOracion) return `💡 Definición aprendida:\n"${memoriaOracion}"`;
+
+  // Solo para una palabra; en oraciones lo maneja el análisis completo (paso 8)
+  for (const p of palabras.length === 1 ? palabras : []) {
+    if (p.length > 2) {
+      const memoriaPalabra = await buscarMemoriaAprendida(p);
+      if (memoriaPalabra) {
+        return `💡 Sobre "${p}" tengo registrado:\n"${memoriaPalabra}"`;
+      }
+    }
+  }
+
+  // 6b. Conjugación de una sola palabra (no interfiere con frases)
+  if (palabras.length === 1) {
+    const hits = INDICE_CONJ.get(palabras[0]);
+    if (hits) {
+      const lista = hits.map((h) => `${TIEMPOS[h.tiempo]}, ${h.persona} de ${h.verbo}`);
+      return `🔤 "${msgOriginal.trim()}":\n${lista.join("\n")}`;
+    }
+  }
+
+  // 7. Respuestas conversacionales
+  if (norm === "que es eso" || (palabras.includes("que") && palabras.includes("es") && palabras.includes("eso"))) {
+    return "Analizando tu consulta [Palabras: 'que', 'es', 'eso'] -> Es una expresión para solicitar la definición de un objeto o concepto. Si deseas enseñarme uno, escribe: 'Aprende que [palabra] significa [definición]'.";
+  }
+  if (norm === "como estas" || (palabras.includes("como") && palabras.includes("estas"))) {
+    return `¡Todo excelente por aquí! ¿Y tú, ${usuarioActual}, cómo estás?`;
+  }
+  if (norm === "bien y tu" || (palabras.includes("bien") && palabras.includes("tu"))) {
+    return "¡Me alegro mucho! Yo estoy genial, listo para ayudarte.";
+  }
+  if (palabras.includes("gracias")) {
+    return `¡De nada, ${usuarioActual}! Es un gusto ayudar.`;
+  }
+
+  // 8. Interpretación de la oración con las palabras que conoce
+  if (palabras.length > 1 || msgOriginal.includes("?")) {
+    const interpretacion = await responderOracion(msgOriginal);
+    if (interpretacion) return interpretacion;
+  }
+
+  return `Entendido. He analizado las ${palabras.length} palabras de tu mensaje ("${palabras.join('", "')}"). No tengo un registro guardado sobre esta consulta. Puedes enseñármelo escribiendo: "Aprende que ${msgOriginal} significa [tu definición]".`;
+}
+
+// ---------- Imágenes pegadas (Ctrl+V / Cmd+V) ----------
+let imagenPendiente = null;
+const previa = document.getElementById("previa");
+const previaImg = document.getElementById("previaImg");
+
+function limpiarImagen() {
+  imagenPendiente = null;
+  previa.hidden = true;
+  previaImg.removeAttribute("src");
+}
+document.getElementById("quitarImg").onclick = limpiarImagen;
+
+texto.addEventListener("paste", (e) => {
+  const items = Array.from(e.clipboardData?.items || []);
+  const item = items.find((it) => it.type.startsWith("image/"));
+  if (!item) return;
+  const file = item.getAsFile();
+  if (!file) return;
+  e.preventDefault();
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    const url = reader.result;
+    const img = new Image();
+    img.onload = () => {
+      imagenPendiente = { url, ancho: img.naturalWidth, alto: img.naturalHeight, tipo: file.type };
+      previaImg.src = url;
+      previa.hidden = false;
+      texto.focus();
+    };
+    img.src = url;
+  };
+  reader.readAsDataURL(file);
+});
+
+function agregarImagen(imagen, textoExtra = "") {
+  const fila = agregarMensaje(textoExtra || "📷 Imagen pegada", "usuario");
+  const div = fila.querySelector(".msg");
+  const img = document.createElement("img");
+  img.src = imagen.url;
+  img.alt = "Imagen pegada";
+  img.className = "msg-img";
+  div.textContent = "";
+  div.appendChild(img);
+  if (textoExtra) {
+    const p = document.createElement("div");
+    p.textContent = textoExtra;
+    p.style.marginTop = "8px";
+    div.appendChild(p);
+  }
+  return fila;
+}
+
+// ---------- Archivos adjuntos ----------
+let archivoActual = null;
+const TEXTO_EXT = ["txt", "md", "csv", "json", "js", "html", "htm", "css", "svg", "xml", "py", "lua", "c", "cpp", "h", "java", "ts", "log", "ini", "yml", "yaml"];
+
+function analizarArchivo(a) {
+  const ext = (a.nombre.split(".").pop() || "").toLowerCase();
+  const lineas = [
+    `📄 Archivo: ${a.nombre}`,
+    `🗂️ Tipo: ${a.tipo || ext || "desconocido"} · ${(a.tamano / 1024).toFixed(1)} KB`
+  ];
+
+  if (a.url) {
+    lineas.push(`🖼️ Imagen de ${a.ancho}×${a.alto} px. Todavía no puedo describir lo que muestra.`);
+    return lineas.join("\n");
+  }
+  if (a.texto === null) {
+    lineas.push("No puedo leer el contenido de este tipo de archivo; solo muestro sus datos.");
+    return lineas.join("\n");
+  }
+
+  const filas = a.texto.split("\n");
+  const numPalabras = a.texto.trim() ? a.texto.trim().split(/\s+/).length : 0;
+  lineas.push(`📏 ${filas.length} líneas · ${numPalabras} palabras · ${a.texto.length} caracteres`);
+
+  if (ext === "json") {
+    try {
+      const obj = JSON.parse(a.texto);
+      const detalle = Array.isArray(obj)
+        ? `lista de ${obj.length} elementos`
+        : `objeto con claves: ${Object.keys(obj).slice(0, 10).join(", ")}`;
+      lineas.push(`✅ JSON válido: ${detalle}`);
+    } catch (e) {
+      lineas.push(`❌ El JSON no es válido: ${e.message}`);
+    }
+  }
+  if (["html", "htm"].includes(ext)) {
+    lineas.push(`🏷️ Etiquetas HTML aproximadas: ${(a.texto.match(/<[a-zA-Z]/g) || []).length}`);
+  }
+  if (["js", "lua", "py", "c", "cpp", "java", "ts"].includes(ext)) {
+    const funciones = (a.texto.match(/function\s+\w+|def\s+\w+|local function\s+\w+/g) || []).length;
+    lineas.push(`🧩 Funciones detectadas: ${funciones}`);
+  }
+
+  const primeras = filas.map((l) => l.trim()).filter(Boolean).slice(0, 5);
+  if (primeras.length) {
+    lineas.push("👀 Primeras líneas:\n" + primeras.map((l) => `  ${l.slice(0, 120)}`).join("\n"));
+  }
+  return lineas.join("\n");
+}
+
+async function recibirArchivo(file) {
+  const ext = (file.name.split(".").pop() || "").toLowerCase();
+  const esImagen = file.type.startsWith("image/");
+  const esTexto = !esImagen && (TEXTO_EXT.includes(ext) || file.type.startsWith("text/") || file.type === "application/json");
+  const info = { nombre: file.name, tipo: file.type, tamano: file.size, texto: null, url: null, ancho: null, alto: null };
+
+  if (esTexto) {
+    info.texto = await file.slice(0, 200000).text();
+  }
+  if (esImagen) {
+    info.url = await new Promise((res) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.readAsDataURL(file);
+    });
+    await new Promise((res) => {
+      const img = new Image();
+      img.onload = () => { info.ancho = img.naturalWidth; info.alto = img.naturalHeight; res(); };
+      img.src = info.url;
+    });
+    agregarImagen(info);
+  } else {
+    agregarMensaje(`📎 ${file.name} (${(file.size / 1024).toFixed(1)} KB)`, "usuario");
+  }
+
+  archivoActual = info;
+  agregarMensaje(`Archivo recibido. Escribe "analiza el archivo", "resume el archivo" o "qué dice el archivo".`, "eloboth");
+}
+
+document.getElementById("adjuntar").onclick = () => document.getElementById("archivoInput").click();
+document.getElementById("archivoInput").onchange = (e) => {
+  const f = e.target.files[0];
+  e.target.value = "";
+  if (f) recibirArchivo(f);
+};
+
+texto.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
+    e.preventDefault();
+    entradaForm.requestSubmit();
+  }
+});
+
+entradaForm.onsubmit = async (e) => {
+  e.preventDefault();
+  let msg = texto.value.trim();
+  if (modoActivo && !imagenPendiente) {
+    msg = msg ? `${modoActivo.prefijo} ${msg}` : modoActivo.prefijo;
+  }
+  const imagen = imagenPendiente;
+  if (!msg && !imagen) return;
+
+  if (imagen) {
+    agregarImagen(imagen, msg);
+    limpiarImagen();
+  } else if (msg) {
+    agregarMensaje(msg, "usuario");
+  }
+  texto.value = "";
+
+  if (imagen && !msg) {
+    agregarMensaje(`📷 Imagen recibida (${imagen.ancho}×${imagen.alto} px). Todavía no puedo analizar su contenido, pero dime qué quieres hacer con ella.`, "eloboth");
+    return;
+  }
+
+  const pensando = agregarMensaje("", "eloboth pensando");
+  const cuerpo = pensando.querySelector(".msg");
+  cuerpo.innerHTML = '<span class="puntos"><span></span><span></span><span></span></span>';
+  progreso = (linea) => { cuerpo.textContent = linea; };
+
+  try {
+    let respuesta = await procesarComando(msg);
+    if (imagen) {
+      respuesta = `📷 Recibí tu imagen (${imagen.ancho}×${imagen.alto} px) junto con tu mensaje. Todavía no puedo analizar su contenido.\n\n${respuesta}`;
+    }
+    pensando.remove();
+    agregarMensaje(respuesta, respuesta.startsWith("<svg") ? "eloboth svg" : "eloboth");
+  } catch (err) {
+    pensando.remove();
+    agregarMensaje(`Error en el procesamiento: ${err.message}`, "eloboth");
+  }
+};
+
+actualizarInterfaz();
+if (usuarioActual) {
+  cargarChats();
+  renderizarBarra();
+  renderizarMensajes();
+  if (!chatActual().mensajes.length) {
+    agregarMensaje(`¡Hola de nuevo, ${usuarioActual}! Eloboth está operativo.`, "eloboth");
+  }
+}
+</script>
+</body>
+</html>
