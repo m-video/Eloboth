@@ -229,6 +229,49 @@
   .previa .boton { margin-left: auto; }
   .msg-img { display: block; max-width: 100%; max-height: 320px; border-radius: 12px; }
 
+  /* ---------- Buscador de conversaciones (cuadro azul) ---------- */
+  .buscador-chats {
+    padding: 10px; border-radius: 14px;
+    background: linear-gradient(135deg, rgba(58, 91, 255, .35), rgba(0, 229, 255, .14));
+    border: 1px solid #3a5bff; box-shadow: 0 6px 20px rgba(58, 91, 255, .25);
+  }
+  .buscador-chats input {
+    width: 100%; padding: 9px 12px; border-radius: 10px; outline: none;
+    border: 1px solid rgba(255, 255, 255, .15); background: rgba(5, 10, 30, .75); color: var(--texto);
+  }
+  .buscador-chats input:focus { border-color: var(--cian); box-shadow: var(--glow); }
+  .sin-resultados { color: var(--suave); font-size: 13px; margin: 4px; }
+
+  /* ---------- Vista previa tipo pestaña ---------- */
+  .barra-vista {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px;
+    padding: 8px 10px; border-radius: 12px 12px 0 0;
+    background: linear-gradient(90deg, #1b2450, #111a3a); border: 1px solid var(--borde); border-bottom: 0;
+  }
+  .pestana-vista {
+    padding: 5px 12px; border-radius: 9px 9px 0 0; font-size: 13px; font-weight: 600;
+    background: rgba(0, 229, 255, .12); border-bottom: 2px solid var(--cian); margin-right: auto;
+  }
+  .mini-btn { padding: 6px 10px; font-size: 12px; border-radius: 8px; }
+  .marco-vista {
+    width: 100%; height: 360px; border: 1px solid var(--borde); border-radius: 0 0 12px 12px;
+    background: #fff; display: block;
+  }
+  .capa-vista {
+    position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
+    background: rgba(3, 6, 18, .75); backdrop-filter: blur(4px); padding: 12px;
+  }
+  .caja-vista {
+    width: min(96vw, 1100px); height: 90vh; display: flex; flex-direction: column;
+    background: var(--panel); border: 1px solid var(--borde); border-radius: 16px; overflow: hidden;
+    box-shadow: var(--sombra), var(--glow);
+  }
+  .cabecera-vista {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 10px 14px; background: linear-gradient(90deg, #1b2450, #111a3a); border-bottom: 1px solid var(--borde);
+  }
+  .marco-grande { flex: 1; width: 100%; border: 0; background: #fff; }
+
   /* ---------- Robot más lindo (cabeza, pantalla y ojos) ---------- */
   .robot {
     background: linear-gradient(160deg, #3a4585, #161d3d 65%, #0c1126);
@@ -371,6 +414,9 @@
 <aside id="barra">
   <button class="boton principal" id="nuevaChat" type="button">+ Nueva conversación</button>
   <h3>Conversaciones</h3>
+  <div class="buscador-chats">
+    <input id="buscarChats" type="search" placeholder="🔎 Buscar en mis conversaciones..." autocomplete="off">
+  </div>
   <div id="listaChats"></div>
 </aside>
 <section id="principal">
@@ -399,6 +445,7 @@
     <button type="button" class="boton" data-modo="cuadro">Crear cuadro comparativo</button>
     <button type="button" class="boton" data-modo="cuento">Crear cuento</button>
     <button type="button" class="boton" data-modo="programacion">Modo programación</button>
+    <button type="button" class="boton" data-modo="imagen">Generar imagen</button>
   </div>
   <div class="fila">
     <button type="button" class="boton" id="adjuntar" title="Adjuntar archivo">📎</button>
@@ -448,6 +495,7 @@ const MODOS = {
   cuadro: { prefijo: "crear cuadro comparativo", etiqueta: "Crear cuadro comparativo" },
   cuento: { prefijo: "crear cuento", etiqueta: "Crear cuento" },
   programacion: { prefijo: "codigo:", etiqueta: "Modo programación" },
+  imagen: { prefijo: "imagen:", etiqueta: "Generar imagen" },
 };
 function fijarModo(clave) {
   modoActivo = MODOS[clave] || null;
@@ -542,7 +590,15 @@ function guardarChats() {
   try {
     almacen.setItem(claveChats(), JSON.stringify(estado));
   } catch (e) {
-    console.warn("No se pudieron guardar las conversaciones:", e);
+    // Si no caben las imágenes, se guarda solo el texto para no perder las conversaciones
+    try {
+      const sinImagenes = JSON.parse(JSON.stringify(estado));
+      sinImagenes.chats.forEach((c) => c.mensajes.forEach((m) => { delete m.imagen; }));
+      almacen.setItem(claveChats(), JSON.stringify(sinImagenes));
+      console.warn("Las imágenes no cupieron en el almacenamiento; se guardó solo el texto.");
+    } catch (e2) {
+      console.warn("No se pudieron guardar las conversaciones:", e2);
+    }
   }
 }
 
@@ -572,7 +628,20 @@ function cargarChats() {
 
 function renderizarBarra() {
   listaChats.innerHTML = "";
-  for (const c of estado.chats) {
+  // Búsqueda: busca en el título y en el texto de todos los mensajes
+  const buscado = (document.getElementById("buscarChats")?.value || "").trim().toLowerCase();
+  const chats = estado.chats.filter((c) => {
+    if (!buscado) return true;
+    if ((c.titulo || "").toLowerCase().includes(buscado)) return true;
+    return (c.mensajes || []).some((m) => (m.texto || "").toLowerCase().includes(buscado));
+  });
+  if (buscado && chats.length === 0) {
+    const vacio = document.createElement("p");
+    vacio.className = "sin-resultados";
+    vacio.textContent = "No encontré conversaciones con eso.";
+    listaChats.appendChild(vacio);
+  }
+  for (const c of chats) {
     const item = document.createElement("div");
     item.className = "chat-item" + (c.id === estado.activo ? " activo" : "");
     const titulo = document.createElement("span");
@@ -592,11 +661,12 @@ function renderizarBarra() {
     listaChats.appendChild(item);
   }
 }
+document.getElementById("buscarChats").addEventListener("input", renderizarBarra);
 
 function renderizarMensajes() {
   mensajes.innerHTML = "";
   const c = chatActual();
-  if (c) c.mensajes.forEach((m) => pintarMensaje(m.texto, m.clase));
+  if (c) c.mensajes.forEach((m) => pintarMensaje(m.texto, m.clase, m.imagen || null));
   chatSection.scrollTop = chatSection.scrollHeight;
 }
 
@@ -629,16 +699,16 @@ function eliminarChat(id) {
 
 document.getElementById("nuevaChat").onclick = () => crearChat();
 
-function agregarMensaje(textoMsj, clase) {
+function agregarMensaje(textoMsj, clase, imagenSrc = null) {
   const transitorio = clase.includes("pensando");
-  const fila = pintarMensaje(textoMsj, clase);
+  const fila = pintarMensaje(textoMsj, clase, imagenSrc);
   if (!transitorio) {
     const c = chatActual();
     if (c) {
       if (clase === "usuario" && c.titulo === TITULO_BASE && textoMsj) {
         c.titulo = textoMsj.slice(0, 32) + (textoMsj.length > 32 ? "…" : "");
       }
-      c.mensajes.push({ texto: textoMsj, clase });
+      c.mensajes.push(imagenSrc ? { texto: textoMsj, clase, imagen: imagenSrc } : { texto: textoMsj, clase });
       guardarChats();
       renderizarBarra();
     }
@@ -646,7 +716,7 @@ function agregarMensaje(textoMsj, clase) {
   return fila;
 }
 
-function pintarMensaje(textoMsj, clase) {
+function pintarMensaje(textoMsj, clase, imagenSrc = null) {
   const fila = document.createElement("div");
   fila.className = "fila-msg " + (clase === "usuario" ? "usuario" : "");
   if (clase !== "usuario") fila.insertAdjacentHTML("beforeend", MINI_ROBOT);
@@ -656,6 +726,15 @@ function pintarMensaje(textoMsj, clase) {
     div.innerHTML = textoMsj; // solo dibujos predefinidos del código
   } else {
     div.textContent = textoMsj;
+  }
+  // Imagen guardada en el chat (subida o generada)
+  if (imagenSrc) {
+    const img = document.createElement("img");
+    img.src = imagenSrc;
+    img.alt = "Imagen del chat";
+    img.className = "msg-img";
+    img.style.marginBottom = "8px";
+    div.prepend(img);
   }
   fila.appendChild(div);
 
@@ -680,31 +759,94 @@ function pintarMensaje(textoMsj, clase) {
   // Si el mensaje trae un bloque HTML, se puede ejecutar aislado en un marco dentro de la página
   const bloqueHtml = !clase.includes("svg") && textoMsj.match(/```html\n([\s\S]*?)\n```/);
   if (bloqueHtml) {
-    const contenedor = document.createElement("div");
+    const codigoHtml = bloqueHtml[1];
+    // Barra tipo pestaña del navegador con los botones de la vista previa
+    const barra = document.createElement("div");
+    barra.className = "barra-vista";
+    const pestana = document.createElement("span");
+    pestana.className = "pestana-vista";
+    pestana.textContent = "🌐 Vista previa";
     const boton = document.createElement("button");
     boton.type = "button";
-    boton.className = "boton";
-    boton.style.marginTop = "10px";
-    boton.textContent = "▶ Ejecutar en esta página";
+    boton.className = "boton mini-btn";
+    boton.textContent = "▶ Ejecutar";
+    const agrandar = document.createElement("button");
+    agrandar.type = "button";
+    agrandar.className = "boton mini-btn";
+    agrandar.textContent = "🔍 Agrandar";
+    const descargar = document.createElement("button");
+    descargar.type = "button";
+    descargar.className = "boton mini-btn";
+    descargar.textContent = "⬇️ Descargar .html";
+    barra.append(pestana, boton, agrandar, descargar);
+
+    const contenedor = document.createElement("div");
+    contenedor.className = "vista-contenedor";
     boton.onclick = () => {
       if (contenedor.firstChild) {
         contenedor.innerHTML = "";
-        boton.textContent = "▶ Ejecutar en esta página";
+        boton.textContent = "▶ Ejecutar";
       } else {
         const marco = document.createElement("iframe");
         marco.setAttribute("sandbox", "allow-scripts");
-        marco.srcdoc = bloqueHtml[1];
-        marco.style.cssText = "width:100%;height:360px;border:1px solid var(--borde);border-radius:12px;margin-top:10px;background:#fff;";
+        marco.srcdoc = codigoHtml;
+        marco.className = "marco-vista";
         contenedor.appendChild(marco);
         boton.textContent = "✖ Ocultar";
       }
     };
-    div.appendChild(boton);
-    div.appendChild(contenedor);
+    agrandar.onclick = () => abrirVistaGrande(codigoHtml);
+    descargar.onclick = () => descargarHtml(codigoHtml);
+    div.append(barra, contenedor);
   }
   mensajes.appendChild(fila);
   chatSection.scrollTop = chatSection.scrollHeight;
   return fila;
+}
+
+// Descarga el código como archivo .html
+function descargarHtml(codigo) {
+  const url = URL.createObjectURL(new Blob([codigo], { type: "text/html;charset=utf-8" }));
+  const enlace = document.createElement("a");
+  enlace.href = url;
+  enlace.download = "eloboth-" + Date.now() + ".html";
+  document.body.appendChild(enlace);
+  enlace.click();
+  enlace.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// Vista previa grande en pantalla completa; se cierra con el botón, un clic afuera o la tecla Escape
+function abrirVistaGrande(codigo) {
+  const capa = document.createElement("div");
+  capa.className = "capa-vista";
+  const caja = document.createElement("div");
+  caja.className = "caja-vista";
+  const cabecera = document.createElement("div");
+  cabecera.className = "cabecera-vista";
+  const titulo = document.createElement("span");
+  titulo.className = "pestana-vista";
+  titulo.textContent = "🌐 Vista previa";
+  const cerrar = document.createElement("button");
+  cerrar.type = "button";
+  cerrar.className = "boton mini-btn";
+  cerrar.textContent = "✖ Cerrar";
+  const cerrarTodo = () => {
+    capa.remove();
+    document.removeEventListener("keydown", alEscape);
+  };
+  const alEscape = (e) => { if (e.key === "Escape") cerrarTodo(); };
+  cerrar.onclick = cerrarTodo;
+  document.addEventListener("keydown", alEscape);
+  const marco = document.createElement("iframe");
+  marco.setAttribute("sandbox", "allow-scripts");
+  marco.srcdoc = codigo;
+  marco.className = "marco-grande";
+  cabecera.append(titulo, cerrar);
+  caja.append(cabecera, marco);
+  capa.appendChild(caja);
+  capa.addEventListener("click", (e) => { if (e.target === capa) cerrarTodo(); });
+  document.body.appendChild(capa);
 }
 
 function normalizarTexto(str) {
@@ -1681,6 +1823,89 @@ async function buscarEnWorker(pregunta) {
   return d && (d.resumen || d.texto) ? d : null;
 }
 
+// Reduce una imagen para enviarla (máximo 768 píxeles por lado, en JPEG) y no gastar de más
+function reducirImagen(dataUrl, maximo) {
+  return new Promise((resolver) => {
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, maximo / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement("canvas");
+      c.width = Math.max(1, Math.round(img.naturalWidth * k));
+      c.height = Math.max(1, Math.round(img.naturalHeight * k));
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      resolver(c.toDataURL("image/jpeg", 0.85));
+    };
+    img.onerror = () => resolver(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
+// Visión: manda la imagen y la pregunta al worker; el modelo de visión responde
+async function respuestaDeVision(pregunta, dataUrl) {
+  progreso("👁️ Mirando la imagen...");
+  const pequena = await reducirImagen(dataUrl, 768);
+  const senal = typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(90000) : undefined;
+  const r = await fetch(`${WORKER_URL}/?vision=1`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ pregunta: pregunta || "Describe esta imagen.", imagen: pequena }),
+    signal: senal,
+  }).catch(() => null);
+  const d = r && r.ok ? await r.json().catch(() => null) : null;
+  if (d && d.resumen) return d.resumen;
+  return "No pude analizar la imagen ahora. Revisa que el worker tenga el binding AI y vuelve a intentarlo.";
+}
+
+// Imagen generada: se guarda aquí y el comando la muestra junto al texto
+let imagenGenerada = null;
+
+// Vuelve transparentes los píxeles blancos (y los casi blancos del borde) de una imagen PNG
+function quitarFondoBlanco(dataUrl) {
+  return new Promise((resolver) => {
+    const img = new Image();
+    img.onload = () => {
+      const lienzo = document.createElement("canvas");
+      lienzo.width = img.naturalWidth;
+      lienzo.height = img.naturalHeight;
+      const ctx2 = lienzo.getContext("2d");
+      ctx2.drawImage(img, 0, 0);
+      try {
+        const datos = ctx2.getImageData(0, 0, lienzo.width, lienzo.height);
+        const px = datos.data;
+        for (let i = 0; i < px.length; i += 4) {
+          const menor = Math.min(px[i], px[i + 1], px[i + 2]);
+          if (menor > 235) px[i + 3] = 0;                               // blanco: transparente
+          else if (menor > 215) px[i + 3] = Math.round((235 - menor) / 20 * 255); // borde suave
+        }
+        ctx2.putImageData(datos, 0, 0);
+        resolver(lienzo.toDataURL("image/png"));
+      } catch (e) {
+        resolver(dataUrl);
+      }
+    };
+    img.onerror = () => resolver(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
+// Generar imagen con Workers AI a partir de una descripción
+async function respuestaDeImagen(descripcion) {
+  const pedido = (descripcion || "").trim();
+  if (!pedido) return "Dime qué imagen quieres. Por ejemplo: imagen: un gato astronauta en la luna, estilo acuarela.";
+  // "sin fondo": se pide fondo blanco liso y luego se vuelve transparente
+  const sinFondo = /sin fondo/i.test(pedido);
+  const pedidoIA = sinFondo ? pedido + ", sobre fondo blanco liso puro, sin sombras ni suelo" : pedido;
+  progreso("🎨 Dibujando la imagen...");
+  const senal = typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(90000) : undefined;
+  const r = await fetch(`${WORKER_URL}/?imagen=1&q=${encodeURIComponent(pedidoIA)}`, { signal: senal }).catch(() => null);
+  const d = r && r.ok ? await r.json().catch(() => null) : null;
+  if (d && d.imagen) {
+    imagenGenerada = sinFondo ? await quitarFondoBlanco(d.imagen) : d.imagen;
+    return `🎨 Aquí tienes la imagen de: ${pedido}` + (d.prompt_en ? `\n(Prompt en inglés: ${d.prompt_en})` : "");
+  }
+  return "No pude generar la imagen ahora. Revisa que el worker tenga el binding AI y vuelve a intentarlo.";
+}
+
 // Modo programación: pide al worker código completo en el lenguaje que se indique
 async function respuestaDeCodigo(pedido) {
   const pregunta = (pedido || "").trim();
@@ -1828,6 +2053,10 @@ async function procesarComando(msgOriginal) {
   if (norm === "hola") {
     return "¡Hola!";
   }
+
+  // 1a-img. Generar imagen: "imagen: ...", "genera una imagen de ...", "dibuja ..."
+  const mImagen = msgOriginal.match(/^\s*(?:imagen\s*:|(?:genera|genérame|generame|crea|hazme|haz|dibuja|dibujame|dibújame)\s+(?:una?\s+)?(?:imagen|dibujo|foto)\s*(?:de|sobre)?\s*:?|dibuja(?:me)?\s*:?)\s*([\s\S]*)$/i);
+  if (mImagen) return await respuestaDeImagen(mImagen[1]);
 
   // 1a-cod. Modo programación ("codigo: ...") o "escribe código de ..." en cualquier lenguaje
   const mCodigo = msgOriginal.match(/^\s*(?:codigo|código)\s*:\s*([\s\S]*)$/i);
@@ -2179,6 +2408,12 @@ texto.addEventListener("paste", (e) => {
 
 function agregarImagen(imagen, textoExtra = "") {
   const fila = agregarMensaje(textoExtra || "📷 Imagen pegada", "usuario");
+  // Se guarda una versión reducida en el chat para que no se pierda al recargar
+  reducirImagen(imagen.url, 640).then((reducida) => {
+    const c = chatActual();
+    const ultimo = c && c.mensajes[c.mensajes.length - 1];
+    if (ultimo) { ultimo.imagen = reducida; guardarChats(); }
+  });
   const div = fila.querySelector(".msg");
   const img = document.createElement("img");
   img.src = imagen.url;
@@ -2357,10 +2592,8 @@ entradaForm.onsubmit = async (e) => {
   }
   texto.value = "";
 
-  if (imagen && !msg) {
-    agregarMensaje(`📷 Imagen recibida (${imagen.ancho}×${imagen.alto} px). Todavía no puedo analizar su contenido, pero dime qué quieres hacer con ella.`, "eloboth");
-    return;
-  }
+  // Si mandan una imagen sin texto, se pide que la describa
+  if (imagen && !msg) msg = "Describe esta imagen en detalle y dime qué ves.";
 
   const pensando = agregarMensaje("", "eloboth pensando");
   const cuerpo = pensando.querySelector(".msg");
@@ -2368,12 +2601,34 @@ entradaForm.onsubmit = async (e) => {
   progreso = (linea) => { cuerpo.textContent = linea; };
 
   try {
-    let respuesta = await procesarComando(msg);
-    if (imagen) {
-      respuesta = `📷 Recibí tu imagen (${imagen.ancho}×${imagen.alto} px) junto con tu mensaje. Todavía no puedo analizar su contenido.\n\n${respuesta}`;
-    }
+    // Con imagen: el modelo de visión la mira y responde a tu mensaje
+    const respuesta = imagen
+      ? await respuestaDeVision(msg, imagen.url)
+      : await procesarComando(msg);
     pensando.remove();
-    agregarMensaje(respuesta, respuesta.startsWith("<svg") ? "eloboth svg" : "eloboth");
+    const filaRespuesta = agregarMensaje(respuesta, respuesta.startsWith("<svg") ? "eloboth svg" : "eloboth");
+    if (imagenGenerada) {
+      // Muestra la imagen generada dentro de la burbuja, con botón para descargarla
+      const burbuja = filaRespuesta.querySelector(".msg");
+      const img = document.createElement("img");
+      img.src = imagenGenerada;
+      img.alt = "Imagen generada";
+      img.className = "msg-img";
+      img.style.marginTop = "10px";
+      const bajar = document.createElement("a");
+      bajar.href = imagenGenerada;
+      bajar.download = "eloboth-imagen-" + Date.now() + ".png";
+      bajar.className = "boton mini-btn";
+      bajar.style.display = "inline-block";
+      bajar.style.marginTop = "8px";
+      bajar.textContent = "⬇️ Descargar imagen";
+      burbuja.append(img, bajar);
+      // Se guarda en el chat si cabe en el almacenamiento
+      const c = chatActual();
+      const ultimo = c && c.mensajes[c.mensajes.length - 1];
+      if (ultimo && imagenGenerada.length < 1500000) { ultimo.imagen = imagenGenerada; guardarChats(); }
+      imagenGenerada = null;
+    }
   } catch (err) {
     pensando.remove();
     agregarMensaje(`Error en el procesamiento: ${err.message}`, "eloboth");
