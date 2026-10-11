@@ -319,6 +319,7 @@
   #texto::placeholder { color: var(--suave); }
   #mic.grabando { background: #ff4d6d; color: #fff; border-color: #ff4d6d; animation: pulso 1s infinite; }
   #enviar { padding: 11px 20px; border-radius: 14px; }
+  #enviar:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; transform: none; filter: grayscale(.6); }
   .pie-entrada { max-width: 880px; margin: 6px auto 0; display: flex; justify-content: space-between; font-size: 12px; color: var(--suave); }
   .previa {
     display: flex; align-items: center; gap: 12px; max-width: 880px; margin: 0 auto 10px;
@@ -603,6 +604,7 @@ const repetirBtn = $("repetirBtn");
 const temaBtn = $("temaBtn");
 const micBtn = $("mic");
 const irAbajo = $("irAbajo");
+const enviarBtn = $("enviar");
 
 // ---------- Almacenamiento seguro ----------
 const almacen = (() => {
@@ -817,15 +819,55 @@ texto.addEventListener("input", autoajustar);
 // ---------- Usuario y contador ----------
 let usuarioActual = almacen.getItem("eloboth_usuario");
 
+const HORAS_BLOQUEO = 24;
+const PLACEHOLDER_NORMAL = "Escribe un mensaje, pega una imagen (Ctrl+V) o usa el micrófono 🎤";
+const PLACEHOLDER_BLOQUEADO = `Ya usaste tus ${MAX_MENSAJES} mensajes gratis. Vuelve en 24 horas.`;
+
 function claveUsos() { return "eloboth_usos_" + usuarioActual; }
+function claveBloqueoLocal() { return "eloboth_bloqueo_" + usuarioActual; }
 function usosActuales() { return Number(almacen.getItem(claveUsos())) || 0; }
-function sumarUso() { almacen.setItem(claveUsos(), String(usosActuales() + 1)); actualizarContador(); }
-function mensajesRestantes() { return Math.max(0, MAX_MENSAJES - usosActuales()); }
+
+// Cuando pasan las 24 horas desde que se gastaron los mensajes, vuelven a estar disponibles
+function revisarReinicio() {
+  const hasta = Number(almacen.getItem(claveBloqueoLocal())) || 0;
+  if (hasta && Date.now() >= hasta) {
+    almacen.removeItem(claveBloqueoLocal());
+    almacen.setItem(claveUsos(), "0");
+  }
+}
+
+function mensajesRestantes() {
+  revisarReinicio();
+  return Math.max(0, MAX_MENSAJES - usosActuales());
+}
+
+function sumarUso() {
+  const nuevo = usosActuales() + 1;
+  almacen.setItem(claveUsos(), String(nuevo));
+  if (nuevo >= MAX_MENSAJES) {
+    almacen.setItem(claveBloqueoLocal(), String(Date.now() + HORAS_BLOQUEO * 3600 * 1000));
+  }
+  actualizarContador();
+}
+
+function avisarSinMensajes() {
+  toast(`Ya usaste tus ${MAX_MENSAJES} mensajes gratis. Vuelve en 24 horas.`);
+}
+
 function actualizarContador() {
-  if (!usuarioActual) { contadorWrap.hidden = true; return; }
+  if (!usuarioActual) {
+    contadorWrap.hidden = true;
+    enviarBtn.disabled = false;
+    texto.disabled = false;
+    return;
+  }
   const quedan = mensajesRestantes();
+  const agotado = quedan <= 0;
   contadorWrap.hidden = false;
-  contador.textContent = quedan > 0 ? `Te quedan ${quedan} de ${MAX_MENSAJES}` : "Sin mensajes gratis por ahora";
+  contador.textContent = agotado ? "Sin mensajes gratis por ahora" : `Te quedan ${quedan} de ${MAX_MENSAJES}`;
+  enviarBtn.disabled = agotado;
+  texto.disabled = agotado;
+  texto.placeholder = agotado ? PLACEHOLDER_BLOQUEADO : PLACEHOLDER_NORMAL;
 }
 
 function uq() { return "&usuario=" + encodeURIComponent(usuarioActual || ""); }
@@ -1703,6 +1745,7 @@ texto.addEventListener("keydown", (e) => {
 
 entradaForm.onsubmit = (e) => {
   e.preventDefault();
+  if (mensajesRestantes() <= 0) { avisarSinMensajes(); return; }
   const imagen = imagenPendiente;
   const entrada = texto.value;
   texto.value = "";
@@ -1724,6 +1767,7 @@ async function enviarMensaje(entrada, opciones = {}) {
   }
   if (!msg && !imagen) return;
   if (!usuarioActual) return;
+  if (mensajesRestantes() <= 0) { avisarSinMensajes(); return; }
 
   if (!repetir) {
     if (imagen) agregarMensaje(msg || "📷 Imagen pegada", "usuario", imagen.url);
@@ -1769,6 +1813,7 @@ async function enviarMensaje(entrada, opciones = {}) {
 
 // Repetir: quita la última respuesta y vuelve a preguntar lo mismo
 repetirBtn.onclick = async () => {
+  if (mensajesRestantes() <= 0) { avisarSinMensajes(); return; }
   const c = chatActual();
   if (!c) return;
   const ultimoUsuario = [...c.mensajes].reverse().find((m) => m.clase === "usuario");
@@ -1911,6 +1956,8 @@ if (!document.documentElement.requestFullscreen) pantallaBtn.style.display = "no
 // ---------- Arranque ----------
 aplicarAjustes();
 actualizarInterfaz();
+// Revisa cada minuto si ya pasaron las 24 horas para habilitar de nuevo el envío
+setInterval(actualizarContador, 60000);
 if (usuarioActual) {
   cargarChats();
   renderizarBarra();
