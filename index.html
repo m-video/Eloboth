@@ -843,7 +843,16 @@ function revisarReinicio() {
 
 function mensajesRestantes() {
   revisarReinicio();
-  return Math.max(0, MAX_MENSAJES - usosActuales());
+  const quedan = Math.max(0, MAX_MENSAJES - usosActuales());
+  // Si no quedan mensajes pero no hay hora de desbloqueo guardada (datos de una versión anterior),
+  // se crea ahora para que el contador siempre muestre un tiempo real
+  if (quedan <= 0 && usuarioActual) {
+    const hasta = Number(almacen.getItem(claveBloqueoLocal())) || 0;
+    if (hasta <= Date.now()) {
+      almacen.setItem(claveBloqueoLocal(), String(Date.now() + HORAS_BLOQUEO * 3600 * 1000));
+    }
+  }
+  return quedan;
 }
 
 function sumarUso() {
