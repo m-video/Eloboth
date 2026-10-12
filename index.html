@@ -160,7 +160,8 @@
     transition: border-color .2s, box-shadow .2s;
   }
   .campo:focus { border-color: var(--a2); box-shadow: var(--glow); }
-  #loginBtn { width: 100%; padding: 14px; font-size: 15px; }
+  #loginBtn, #crearBtn { width: 100%; padding: 14px; font-size: 15px; }
+  .error-auth { color: #ff6b8a; font-size: 13px; margin: 0; }
   .nota { font-size: 12px; color: var(--suave); }
 
   /* ---------- Layout ---------- */
@@ -515,9 +516,12 @@
       <li><span>💻</span> Escribo código en el lenguaje que pidas</li>
       <li><span>🎤</span> Puedes hablarme y que te lea las respuestas</li>
     </ul>
-    <input class="campo" id="nombreUsuario" type="text" placeholder="¿Cómo te llamas?" maxlength="30">
-    <button class="boton principal" id="loginBtn" type="button">Empezar</button>
-    <span class="nota">Tus conversaciones se guardan en este navegador.</span>
+    <input class="campo" id="nombreUsuario" type="text" placeholder="Nombre de usuario" maxlength="30" autocomplete="username">
+    <input class="campo" id="claveUsuario" type="password" placeholder="Contraseña (mínimo 4 caracteres)" maxlength="60" autocomplete="current-password">
+    <p class="error-auth" id="authMsg" hidden></p>
+    <button class="boton principal" id="loginBtn" type="button">Iniciar sesión</button>
+    <button class="boton" id="crearBtn" type="button">Crear cuenta</button>
+    <span class="nota">Tu cuenta y tus chats se guardan en este navegador.</span>
   </div>
 </div>
 
@@ -911,22 +915,82 @@ function actualizarInterfaz() {
 
 nombreInput.addEventListener("keydown", (e) => { if (e.key === "Enter") loginBtn.click(); });
 
-loginBtn.onclick = () => {
-  const val = nombreInput.value.trim();
-  if (!val) {
-    nombreInput.placeholder = "Primero escribe tu nombre";
-    nombreInput.focus();
-    return;
-  }
-  usuarioActual = val;
+// ---------- Cuentas (nombre + contraseña, guardadas en este navegador) ----------
+const claveInput = $("claveUsuario");
+const authMsg = $("authMsg");
+const crearBtn = $("crearBtn");
+
+function mostrarAuth(t) { authMsg.textContent = t; authMsg.hidden = !t; }
+
+function leerCuentas() {
+  try { return JSON.parse(almacen.getItem("eloboth_cuentas")) || {}; } catch (e) { return {}; }
+}
+
+function guardarCuentas(cuentas) { almacen.setItem("eloboth_cuentas", JSON.stringify(cuentas)); }
+
+// Hash SHA-256 con sal: la contraseña nunca se guarda en texto plano
+async function hashClave(clave, sal) {
+  if (!crypto.subtle) throw new Error("sin cifrado");
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(sal + ":" + clave));
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function datosDeCuenta() {
+  const nombre = nombreInput.value.trim();
+  const clave = claveInput.value;
+  if (nombre.length < 2) { mostrarAuth("El nombre debe tener al menos 2 caracteres."); return null; }
+  if (clave.length < 4) { mostrarAuth("La contraseña debe tener al menos 4 caracteres."); return null; }
+  return { nombre, clave, id: nombre.toLowerCase() };
+}
+
+function entrarComo(nombre) {
+  usuarioActual = nombre;
   almacen.setItem("eloboth_usuario", usuarioActual);
   nombreInput.value = "";
+  claveInput.value = "";
+  mostrarAuth("");
   cargarChats();
   actualizarInterfaz();
   renderizarBarra();
   renderizarMensajes();
   texto.focus();
-};
+}
+
+async function crearCuenta() {
+  const d = datosDeCuenta();
+  if (!d) return;
+  const cuentas = leerCuentas();
+  if (cuentas[d.id]) { mostrarAuth("Ese nombre ya existe. Inicia sesión o elige otro."); return; }
+  try {
+    const sal = Array.from(crypto.getRandomValues(new Uint8Array(16))).map((b) => b.toString(16).padStart(2, "0")).join("");
+    cuentas[d.id] = { nombre: d.nombre, sal, hash: await hashClave(d.clave, sal) };
+  } catch (e) {
+    mostrarAuth("Tu navegador no permite crear cuentas aquí.");
+    return;
+  }
+  guardarCuentas(cuentas);
+  entrarComo(d.nombre);
+}
+
+async function iniciarSesion() {
+  const d = datosDeCuenta();
+  if (!d) return;
+  const cuenta = leerCuentas()[d.id];
+  if (!cuenta) { mostrarAuth("No existe esa cuenta. Crea una nueva."); return; }
+  let coincide = false;
+  try {
+    coincide = (await hashClave(d.clave, cuenta.sal)) === cuenta.hash;
+  } catch (e) {
+    mostrarAuth("Tu navegador no permite iniciar sesión aquí.");
+    return;
+  }
+  if (!coincide) { mostrarAuth("Contraseña incorrecta."); return; }
+  entrarComo(cuenta.nombre);
+}
+
+loginBtn.onclick = () => { iniciarSesion(); };
+crearBtn.onclick = () => { crearCuenta(); };
+claveInput.addEventListener("keydown", (e) => { if (e.key === "Enter") loginBtn.click(); });
 
 logoutBtn.onclick = () => {
   if (mensajesRestantes() <= 0) {
