@@ -126,6 +126,7 @@
   .boton.principal { background: linear-gradient(135deg, var(--a1), var(--a2)); border: 0; color: #04101a; font-weight: 700; }
   .boton.principal:hover { box-shadow: 0 0 26px rgba(0,229,255,.4); }
   .boton.peligro:hover { border-color: #ff6b8a; color: #ff6b8a; box-shadow: none; }
+  .boton:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
   .icono { width: 40px; height: 40px; padding: 0; display: grid; place-items: center; font-size: 17px; border-radius: 13px; }
   .pequeno { padding: 5px 11px; font-size: 12px; border-radius: 10px; }
 
@@ -850,8 +851,19 @@ function sumarUso() {
   actualizarContador();
 }
 
+// Texto corto con lo que falta para volver a usar Eloboth (ej: "5 h 12 min")
+function tiempoParaReinicio() {
+  const hasta = Number(almacen.getItem(claveBloqueoLocal())) || 0;
+  const falta = hasta - Date.now();
+  if (falta <= 0) return "";
+  const totalMin = Math.ceil(falta / 60000);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  return h > 0 ? `${h} h ${m} min` : `${m} min`;
+}
+
 function avisarSinMensajes() {
-  toast(`Ya usaste tus ${MAX_MENSAJES} mensajes gratis. Vuelve en 24 horas.`);
+  toast(`Ya usaste tus ${MAX_MENSAJES} mensajes gratis. Vuelve en ${tiempoParaReinicio() || "24 horas"}.`);
 }
 
 function actualizarContador() {
@@ -864,10 +876,16 @@ function actualizarContador() {
   const quedan = mensajesRestantes();
   const agotado = quedan <= 0;
   contadorWrap.hidden = false;
-  contador.textContent = agotado ? "Sin mensajes gratis por ahora" : `Te quedan ${quedan} de ${MAX_MENSAJES}`;
+  contador.textContent = agotado
+    ? `Sin mensajes · vuelve en ${tiempoParaReinicio() || "24 h"}`
+    : `Te quedan ${quedan} de ${MAX_MENSAJES}`;
   enviarBtn.disabled = agotado;
+  logoutBtn.disabled = agotado;
+  logoutBtn.title = agotado ? "No puedes salir mientras esperas el reinicio de tus mensajes" : "Salir";
   texto.disabled = agotado;
-  texto.placeholder = agotado ? PLACEHOLDER_BLOQUEADO : PLACEHOLDER_NORMAL;
+  texto.placeholder = agotado
+    ? `Ya usaste tus ${MAX_MENSAJES} mensajes gratis. Vuelve en ${tiempoParaReinicio() || "24 horas"}.`
+    : PLACEHOLDER_NORMAL;
 }
 
 function uq() { return "&usuario=" + encodeURIComponent(usuarioActual || ""); }
@@ -911,6 +929,10 @@ loginBtn.onclick = () => {
 };
 
 logoutBtn.onclick = () => {
+  if (mensajesRestantes() <= 0) {
+    toast(`No puedes salir de tu cuenta mientras esperas. Vuelve en ${tiempoParaReinicio() || "24 horas"}.`);
+    return;
+  }
   almacen.removeItem("eloboth_usuario");
   usuarioActual = null;
   mensajes.innerHTML = "";
@@ -1957,7 +1979,7 @@ if (!document.documentElement.requestFullscreen) pantallaBtn.style.display = "no
 aplicarAjustes();
 actualizarInterfaz();
 // Revisa cada minuto si ya pasaron las 24 horas para habilitar de nuevo el envío
-setInterval(actualizarContador, 60000);
+setInterval(actualizarContador, 30000);
 if (usuarioActual) {
   cargarChats();
   renderizarBarra();
