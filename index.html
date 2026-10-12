@@ -1630,12 +1630,27 @@ let respuestaDormida = null;
 let imagenGenerada = null;
 let progreso = () => {};
 
+// Si el worker bloqueó la cuenta, el navegador toma su misma hora de desbloqueo
+// (así el contador baja y coincide con el servidor, en vez de quedar en "24 horas" fijas)
+function sincronizarBloqueo(d) {
+  if (!d || !d.dormido || d.global || !d.resetAt || !usuarioActual) return;
+  almacen.setItem(claveBloqueoLocal(), String(d.resetAt));
+  almacen.setItem(claveUsos(), String(MAX_MENSAJES));
+  actualizarContador();
+}
+
+function textoDormido(d) {
+  if (d.global || !d.resetAt) return d.mensaje;
+  return `Ya usaste tus ${MAX_MENSAJES} mensajes gratis. Vuelve en ${tiempoParaReinicio() || "24 horas"}.`;
+}
+
 async function pedirAlWorker(url) {
   const senal = typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(30000) : undefined;
   const r = await fetch(url, { signal: senal });
   const d = await r.json().catch(() => null);
   if (d && d.dormido) {
-    respuestaDormida = d.mensaje;
+    sincronizarBloqueo(d);
+    respuestaDormida = textoDormido(d);
     return null;
   }
   return d;
@@ -1689,7 +1704,7 @@ async function respuestaDeVision(pregunta, dataUrl) {
     signal: senal,
   }).catch(() => null);
   const d = r && r.ok ? await r.json().catch(() => null) : null;
-  if (d && d.dormido) { respuestaDormida = d.mensaje; return null; }
+  if (d && d.dormido) { sincronizarBloqueo(d); respuestaDormida = textoDormido(d); return null; }
   if (d && d.resumen) return d.resumen;
   return RESPALDO;
 }
